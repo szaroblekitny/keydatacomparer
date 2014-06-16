@@ -107,8 +107,13 @@ public class Porownywacz {
             for (int ii = 0; ii < polaTabeli.size(); ii++) {
                 wypPola += polaTabeli.get(ii).getNazwaKolumnny() + "|";
             }
-            wypPola = wypPola.substring(0, wypPola.length() - 1);
-            zapisywacz.write(wypPola + "\n");
+            
+            if (wypPola.length() > 0) {
+            	wypPola = wypPola.substring(0, wypPola.length() - 1);
+            	zapisywacz.write(wypPola + "\n");
+            } else {
+            	zapisywacz.write("Brak pól w tabeli\n");
+            }
 
             /*
              * Dla każdej tabelki robimy selekty i łapiemy klucze główne do zbioru sortowanego (SortedSet).
