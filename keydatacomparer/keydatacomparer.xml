@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Simple Public License (SimPL) 2.0. You may obtain
+a copy of the License at http://opensource.org/licenses/Simple-2.0
+You get the royalty free right to use the software for any purpose;
+make derivative works of it (this is called a "Derived Work");
+copy and distribute it and any Derived Work.
+You get NO WARRANTIES. None of any kind. If the software damages you
+in any way, you may only recover direct damages up to the amount you
+paid for it (that is zero if you did not pay anything). 
+-->
+<keydatacomparer>
+    <databases>
+        <sourcedatabase>
+          <host>localhost</host>
+            <port>1521</port>
+            <name>ora11</name>
+            <username>hr</username>
+            <userpassword>password</userpassword>
+        </sourcedatabase>
+        
+        <compareddatabase>
+            <host>localhost</host>
+            <port>1521</port>
+            <name>ora11</name>
+            <username>scott</username>
+            <userpassword>password</userpassword>
+        </compareddatabase>
+        
+    </databases>
+    <tables>
+        <table>CONFIGURACJA</table>
+        <table>RECONFIGURACJA</table>
+    </tables>
+    <!-- <logging file="log4j.xml" /> -->
+    <logging file="log4j.xml" />
+</keydatacomparer>
