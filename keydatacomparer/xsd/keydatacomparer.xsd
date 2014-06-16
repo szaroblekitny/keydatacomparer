@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Simple Public License (SimPL) 2.0. You may obtain
+a copy of the License at http://opensource.org/licenses/Simple-2.0
+
+You get the royalty free right to use the software for any purpose;
+make derivative works of it (this is called a "Derived Work");
+copy and distribute it and any Derived Work.
+You get NO WARRANTIES. None of any kind. If the software damages you
+in any way, you may only recover direct damages up to the amount you
+paid for it (that is zero if you did not pay anything).
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:complexType name="Database">
+        <xs:sequence>
+            <xs:element name="host" type="xs:string" minOccurs="1"/>
+            <xs:element name="port" type="xs:int"/>
+            <xs:element name="name" type="xs:string" minOccurs="1"/>
+            <xs:element name="username" type="xs:string" minOccurs="1"/>
+            <xs:element name="userpassword" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:simpleType name="LoggingLevel">
+        <!-- TRACE, DEBUG, INFO, WARN, ERROR and FATAL -->
+        <xs:restriction base="xs:string">
+            <xs:enumeration value=""/>  <!-- empty is allowed if filename is given -->
+            <xs:enumeration value="FATAL"/>
+            <xs:enumeration value="ERROR"/>
+            <xs:enumeration value="WARN"/>
+            <xs:enumeration value="INFO"/>
+            <xs:enumeration value="DEBUG"/>
+            <xs:enumeration value="TRACE"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="Logging">
+        <xs:simpleContent>
+            <xs:extension base="LoggingLevel">
+                <xs:attribute name="file" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    
+    <xs:element name="keydatacomparer">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="databases">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="sourcedatabase" type="Database" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="compareddatabase" type="Database" minOccurs="1" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="tables">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="table" type="xs:string" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="logging" type="Logging" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
