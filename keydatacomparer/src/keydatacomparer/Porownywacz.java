@@ -123,7 +123,10 @@ public class Porownywacz {
              */
             daneKluczyWzorcowych = wzorzec.daneKluczowe(tabela);
             if (logg.isDebugEnabled()) {
-                wyswietlDebugKluczy(daneKluczyWzorcowych);
+            	if (daneKluczyWzorcowych != null)
+            		wyswietlDebugKluczy(daneKluczyWzorcowych);
+                else
+                	logg.warn("Brak klucza głównego dla " + tabela.getNazwaTabeli());
             }
 
             daneKluczyPorownywanych = kopia.daneKluczowe(tabela);
@@ -133,7 +136,7 @@ public class Porownywacz {
 
             logg.debug("Różnica wzorca");
             roznicaWzorca = new TreeSet<>();
-            if (!roznicaWzorca.addAll(daneKluczyWzorcowych)) {
+            if (daneKluczyWzorcowych == null || !roznicaWzorca.addAll(daneKluczyWzorcowych)) {
                 logg.debug("dodanie kluczy wzorcowych nieudane");
             } else {
                 logg.debug("Dodanie udane");
@@ -142,26 +145,31 @@ public class Porownywacz {
             }
 
             logg.debug("Różnica kopii");
-            roznicaPora = new TreeSet<>();
-            if (!roznicaPora.addAll(daneKluczyPorownywanych)) {
-                logg.debug("dodanie kluczy kopii nieudane");
-            } else {
-                logg.debug("Dodanie kopii udane");
-                pokazRoznice(roznicaPora, daneKluczyWzorcowych,
-                        "Rekordy, które są w bazie porównywanej, a nie ma we wzorcowej");
-            }
+            
+			if (daneKluczyWzorcowych != null && daneKluczyPorownywanych != null) {
+				roznicaPora = new TreeSet<>();
+				if (!roznicaPora.addAll(daneKluczyPorownywanych)) {
+					logg.debug("dodanie kluczy kopii nieudane");
+				} else {
+					logg.debug("Dodanie kopii udane");
+					pokazRoznice(roznicaPora, daneKluczyWzorcowych,
+							"Rekordy, które są w bazie porównywanej, a nie ma we wzorcowej");
+				}
 
-            logg.debug("Część wspólna");
-            wspolneRekordy = new TreeSet<>();
-            if (!wspolneRekordy.addAll(daneKluczyWzorcowych)) {
-                logg.debug("dodanie kluczy wzorcowych do wspólnych nieudane");
-            } else {
-                if (wspolneRekordy.retainAll(daneKluczyPorownywanych)) {
-                    pokazRozneRekordy(wspolneRekordy,
-                            wzorzec.getDbconnection(),
-                            kopia.getDbconnection());
-                }
-            }
+				logg.debug("Część wspólna");
+				wspolneRekordy = new TreeSet<>();
+				if (!wspolneRekordy.addAll(daneKluczyWzorcowych)) {
+					logg.debug("dodanie kluczy wzorcowych do wspólnych nieudane");
+				} else {
+					if (wspolneRekordy.retainAll(daneKluczyPorownywanych)) {
+						pokazRozneRekordy(wspolneRekordy,
+								wzorzec.getDbconnection(),
+								kopia.getDbconnection());
+					}
+				}
+			} else {
+				logg.error("BRAK KLUCZOWYCH DANYCH");
+			}
 
         }
 
@@ -169,17 +177,21 @@ public class Porownywacz {
 
     /////////  privates  ////////////////////////////////////////////////////////////////////
     private void wyswietlDebugKluczy(SortedSet<Klucz> klucze) {
-        String str = "";
-        logg.debug("Dane kluczy porow: " + klucze.size());
-        for (Klucz iterator : klucze) {
-            for (int ii = 0; ii < iterator.getDlugosc(); ii++) {
-                str += iterator.getLista().get(ii) + " ";
-            }
-            if (logg.isTraceEnabled()) {
-                logg.trace(str);
-            }
-            str = "";
-        }
+		if (klucze != null) {
+			String str = "";
+			logg.debug("Dane kluczy porow: " + klucze.size());
+			for (Klucz iterator : klucze) {
+				for (int ii = 0; ii < iterator.getDlugosc(); ii++) {
+					str += iterator.getLista().get(ii) + " ";
+				}
+				if (logg.isTraceEnabled()) {
+					logg.trace(str);
+				}
+				str = "";
+			}
+		} else {
+			logg.warn("Klucze puste!");
+		}
     }
 
     // --------------------------------------------------------------------------------------
