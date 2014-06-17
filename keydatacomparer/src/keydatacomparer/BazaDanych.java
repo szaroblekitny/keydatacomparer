@@ -28,6 +28,10 @@ public abstract class BazaDanych {
     protected String username;
     protected String userpassword;
     
+    /// this comment is only for git testing purpose.
+    /// $Id: $
+    
+    
     protected String connectUrl;
     /**
      * Database connection
