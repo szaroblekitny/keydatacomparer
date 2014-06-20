@@ -7,8 +7,8 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/app/Java/jdk1.7.0_51/jre/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="C:/Download/Apache/log4j_12/apache-log4j-1.2.17/log4j-1.2.17.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/app/baza11/product/11.2.0/client_2/jdbc/lib/ojdbc6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/ojdbc6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
