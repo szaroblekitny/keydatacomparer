@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  * <li>number of records in the compared database
  * <li>missing records in the compared database which are in the source
  * <li>missing records in the source database which are in the other
- * <li>differend records with the same primary key
+ * <li>different records with the same primary key
  * </ul>
  *
  * @author Wojciech Zaręba
