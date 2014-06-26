@@ -159,7 +159,7 @@ public class OracleDB extends BazaDanych {
      */
     @Override
     public SortedSet<Klucz> daneKluczowe(Tabela tabelka) {
-        SortedSet<Klucz> daneKluczy;
+        SortedSet<Klucz> daneKluczy = new TreeSet<>();
         PreparedStatement prepState;
         ResultSet result;
         String sqlStatement;
@@ -213,7 +213,7 @@ public class OracleDB extends BazaDanych {
 				logg.debug(sqlStatement);
 				prepState = getDbconnection().prepareStatement(sqlStatement);
 				result = prepState.executeQuery();
-				daneKluczy = new TreeSet<>();
+				
 				while (result.next()) {
 					daneRekordu = "";
 					// numerujemy od jednego, JDBC ma inną pragmatykę...
@@ -232,13 +232,10 @@ public class OracleDB extends BazaDanych {
 					rekord.clear();
 				} // while (result.next())
 				logg.debug("Ile w kluczach: " + daneKluczy.size());
-			} else { // ileRekordow > 0
-				daneKluczy = null;
 			}
 
         } catch (SQLException ex) {
             logg.error("Błąd SQL (daneKluczowe): " + ex.getMessage());
-            daneKluczy = null;
         }
 
         return daneKluczy;
