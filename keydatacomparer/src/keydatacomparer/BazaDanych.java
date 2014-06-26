@@ -64,6 +64,7 @@ public abstract class BazaDanych {
      * Gives connection to the database.
      * 
      * @return the database connection
+     * @throws java.sql.SQLException
      */
     public abstract Connection databaseConnection()
             throws SQLException;
