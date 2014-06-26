@@ -19,7 +19,7 @@ import oracle.jdbc.pool.OracleDataSource;
 import org.apache.log4j.Logger;
 
 /**
- * Extends Oracle database.
+ * Extends BazaDanych class for implementation of Oracle database.
  *
  * @author Wojciech Zaręba
  */
