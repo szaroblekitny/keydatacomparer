@@ -126,12 +126,17 @@ public class Porownywacz {
             	if (daneKluczyWzorcowych != null)
             		wyswietlDebugKluczy(daneKluczyWzorcowych);
                 else
-                	logg.warn("Brak klucza głównego dla " + tabela.getNazwaTabeli());
+                	logg.warn("Brak danych z kluczy głównych dla "
+                           + wzorzec.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
             daneKluczyPorownywanych = kopia.daneKluczowe(tabela);
             if (logg.isDebugEnabled()) {
-                wyswietlDebugKluczy(daneKluczyPorownywanych);
+            	if (daneKluczyPorownywanych != null)
+            		wyswietlDebugKluczy(daneKluczyPorownywanych);
+            	else
+            		logg.warn("Brak danych z kluczy głównych dla "
+                            + kopia.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
             logg.debug("Różnica wzorca");
