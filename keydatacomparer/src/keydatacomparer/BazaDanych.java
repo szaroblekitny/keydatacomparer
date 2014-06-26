@@ -152,6 +152,14 @@ public abstract class BazaDanych {
     public ArrayList<Tabela> getTabele() {
         return tabele;
     }
+    
+    /**
+     * 
+     * @return String with schema and database for displaing
+     */
+    public String getSchemaAndDatabaseName() {
+    	return this.database + ":" + this.username;
+    }
 
     
 }
