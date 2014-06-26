@@ -19,7 +19,7 @@ import oracle.jdbc.pool.OracleDataSource;
 import org.apache.log4j.Logger;
 
 /**
- * Extends Oracle database.
+ * Extends BazaDanych class for implementation of Oracle database.
  *
  * @author Wojciech Zaręba
  */
@@ -159,7 +159,7 @@ public class OracleDB extends BazaDanych {
      */
     @Override
     public SortedSet<Klucz> daneKluczowe(Tabela tabelka) {
-        SortedSet<Klucz> daneKluczy;
+        SortedSet<Klucz> daneKluczy = new TreeSet<>();
         PreparedStatement prepState;
         ResultSet result;
         String sqlStatement;
@@ -167,6 +167,7 @@ public class OracleDB extends BazaDanych {
         ArrayList<String> rekord = new ArrayList<>();
         String danePola;
         String daneRekordu;
+        int ileRekordow = 0;
 
         ArrayList<String> kluczyk = tabelka.getKluczGlowny();
 
@@ -175,60 +176,66 @@ public class OracleDB extends BazaDanych {
             // najpierw liczymy ile rekordów ma tabelka
             sqlStatement = "select count(*) from " + tabelka.getNazwaTabeli();
             prepState = getDbconnection().prepareStatement(sqlStatement);
-            result = prepState.executeQuery();
-            if(!result.next()) {
-                logg.error("Nie można policzyć");
-            }
-            int ileRekordow = result.getInt(1);
-            logg.debug("Liczba rekordów: " + ileRekordow);
             
-            result.close();
-            prepState.close();
+            try {
+            	result = prepState.executeQuery();
+            	if(!result.next()) {
+            		logg.error("Nie można policzyć");
+            	}
+            	ileRekordow = result.getInt(1);
+            	logg.debug("Liczba rekordów (" + getSchemaAndDatabaseName() + "/"
+            			+ tabelka.getNazwaTabeli() +"): " + ileRekordow);
+            	result.close();
+            	
+            } catch (SQLException sex) {
+            	ileRekordow = 0;
+            } finally {
+            	prepState.close();
+            }
             
-            // przechodzimy do wypełnienia struktury danych zawierającej wrtości kluczy głównych
-            sqlStatement = "select ";
-            for (int ii = 0; ii < kluczyk.size(); ii++) {
-                sqlStatement += kluczyk.get(ii) + ", ";
-            }
-            // ucinamy końcowy przecinek
-            sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
-            sqlStatement += " from " + tabelka.getNazwaTabeli() + " "
-                    + "order by ";
-            for (int ii = 0; ii < kluczyk.size(); ii++) {
-                sqlStatement += kluczyk.get(ii) + ", ";
-            }
-            // ucinamy końcowy przecinek
-            sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
+            if (ileRekordow > 0) {
+				// przechodzimy do wypełnienia struktury danych zawierającej wrtości kluczy głównych
+				sqlStatement = "select ";
+				for (int ii = 0; ii < kluczyk.size(); ii++) {
+					sqlStatement += kluczyk.get(ii) + ", ";
+				}
+				// ucinamy końcowy przecinek
+				sqlStatement = sqlStatement.substring(0,
+						sqlStatement.length() - 2);
+				sqlStatement += " from " + tabelka.getNazwaTabeli() + " "
+						+ "order by ";
+				for (int ii = 0; ii < kluczyk.size(); ii++) {
+					sqlStatement += kluczyk.get(ii) + ", ";
+				}
+				// ucinamy końcowy przecinek
+				sqlStatement = sqlStatement.substring(0,
+						sqlStatement.length() - 2);
+				logg.debug(sqlStatement);
+				prepState = getDbconnection().prepareStatement(sqlStatement);
+				result = prepState.executeQuery();
+				
+				while (result.next()) {
+					daneRekordu = "";
+					// numerujemy od jednego, JDBC ma inną pragmatykę...
+					for (int ii = 1; ii <= kluczyk.size(); ii++) {
+						danePola = result.getString(ii);
+						rekord.add(danePola);
+						daneRekordu += danePola + " ";
+					}
+					if (logg.isTraceEnabled()) {
+						logg.trace("Rec: " + daneRekordu);
+					}
 
-            logg.debug(sqlStatement);
-            prepState = getDbconnection().prepareStatement(sqlStatement);
-            result = prepState.executeQuery();
-
-            daneKluczy = new TreeSet<>();
-            
-            while (result.next()) {
-                daneRekordu = "";
-                // numerujemy od jednego, JDBC ma inną pragmatykę...
-                for (int ii = 1; ii <= kluczyk.size(); ii++) {
-                    danePola = result.getString(ii);
-                    rekord.add(danePola);
-                    daneRekordu += danePola + " ";
-                }
-                if (logg.isTraceEnabled()) {
-                    logg.trace("Rec: " + daneRekordu);
-                }
-                
-                if (!daneKluczy.add(new Klucz(rekord))) {
-                    logg.debug("Nieudaczne dodanie");
-                }
-                rekord.clear();
-            }  // while (result.next())
-            
-            logg.debug("Ile w kluczach: " + daneKluczy.size());
+					if (!daneKluczy.add(new Klucz(rekord))) {
+						logg.debug("Nieudaczne dodanie");
+					}
+					rekord.clear();
+				} // while (result.next())
+				logg.debug("Ile w kluczach: " + daneKluczy.size());
+			}
 
         } catch (SQLException ex) {
             logg.error("Błąd SQL (daneKluczowe): " + ex.getMessage());
-            daneKluczy = null;
         }
 
         return daneKluczy;

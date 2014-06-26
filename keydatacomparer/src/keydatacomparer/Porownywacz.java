@@ -19,9 +19,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+
 // import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -42,11 +46,10 @@ import org.apache.log4j.Logger;
 public class Porownywacz {
 
     private static Logger logg = Logger.getLogger(Porownywacz.class.getName());
-    private SortedSet<Klucz> daneKluczyWzorcowych;
-    private SortedSet<Klucz> daneKluczyPorownywanych;
-    private SortedSet<Klucz> roznicaWzorca;
-    private SortedSet<Klucz> roznicaPora;
-    private SortedSet<Klucz> wspolneRekordy;
+    private Set<Klucz> daneKluczyWzorcowych;
+    private Set<Klucz> daneKluczyPorownywanych;
+    private Set<Klucz> roznicaWzorca = new HashSet<>();
+    private Set<Klucz> wspolneRekordy;
     private FileWriter zapisywacz;
     private Tabela tabela;
 
@@ -124,47 +127,58 @@ public class Porownywacz {
             daneKluczyWzorcowych = wzorzec.daneKluczowe(tabela);
             if (logg.isDebugEnabled()) {
             	if (daneKluczyWzorcowych != null)
-            		wyswietlDebugKluczy(daneKluczyWzorcowych);
+            		wyswietlDebugKluczy((SortedSet<Klucz>) daneKluczyWzorcowych);
                 else
-                	logg.warn("Brak klucza głównego dla " + tabela.getNazwaTabeli());
+                	logg.warn("Brak danych z kluczy głównych dla "
+                           + wzorzec.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
             daneKluczyPorownywanych = kopia.daneKluczowe(tabela);
             if (logg.isDebugEnabled()) {
-                wyswietlDebugKluczy(daneKluczyPorownywanych);
+            	if (daneKluczyPorownywanych != null)
+            		wyswietlDebugKluczy((SortedSet<Klucz>) daneKluczyPorownywanych);
+            	else
+            		logg.warn("Brak danych z kluczy głównych dla "
+                            + kopia.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
             logg.debug("Różnica wzorca");
-            roznicaWzorca = new TreeSet<>();
-            if (daneKluczyWzorcowych == null || !roznicaWzorca.addAll(daneKluczyWzorcowych)) {
-                logg.debug("dodanie kluczy wzorcowych nieudane");
+            // metoda addAll zwraca true, jeśli dodawana kolekcja zmienia wielkość zbioru
+            // i daje sumę zbiorów
+            // metoda removeAll daje niesymetryczną różnicę zbiorów i zwraca true, jeśli operacja
+            // zmienia wielkość zbioru
+            roznicaWzorca.addAll(daneKluczyWzorcowych);
+            if (!roznicaWzorca.addAll(daneKluczyPorownywanych)) {
+                logg.debug("brak różnic w danych kluczy");
             } else {
                 logg.debug("Dodanie udane");
-                pokazRoznice(roznicaWzorca, daneKluczyPorownywanych,
+                pokazRoznice((SortedSet<Klucz>) daneKluczyWzorcowych, (SortedSet<Klucz>) daneKluczyPorownywanych,
                         "Rekordy, które są we wzorcu, a nie ma w porównaniu");
+                pokazRoznice((SortedSet<Klucz>) daneKluczyPorownywanych, (SortedSet<Klucz>) daneKluczyWzorcowych,
+                        "Rekordy, które są w porównaniu, a nie ma we wzorcu");
             }
 
-            logg.debug("Różnica kopii");
-            
 			if (daneKluczyWzorcowych != null && daneKluczyPorownywanych != null) {
-				roznicaPora = new TreeSet<>();
-				if (!roznicaPora.addAll(daneKluczyPorownywanych)) {
-					logg.debug("dodanie kluczy kopii nieudane");
-				} else {
-					logg.debug("Dodanie kopii udane");
-					pokazRoznice(roznicaPora, daneKluczyWzorcowych,
-							"Rekordy, które są w bazie porównywanej, a nie ma we wzorcowej");
-				}
-
 				logg.debug("Część wspólna");
 				wspolneRekordy = new TreeSet<>();
-				if (!wspolneRekordy.addAll(daneKluczyWzorcowych)) {
-					logg.debug("dodanie kluczy wzorcowych do wspólnych nieudane");
+				/*
+				 *  Najpierw tworzymy zbiór wszystkich rekordów. Potem stosujemy metodę retainAll,
+				 *  która zachowuje w zbiorze wspolneRekordy tylko elementy występujące kolejno w obu
+				 *  zbiorach.
+				 */
+				if (!wspolneRekordy.addAll(daneKluczyWzorcowych) && !wspolneRekordy.addAll(daneKluczyPorownywanych)) {
+					logg.debug("pusto w danych kluczy");
 				} else {
-					if (wspolneRekordy.retainAll(daneKluczyPorownywanych)) {
-						pokazRozneRekordy(wspolneRekordy,
+					if (wspolneRekordy.retainAll(daneKluczyPorownywanych)
+							|| wspolneRekordy.retainAll(daneKluczyWzorcowych)) {
+						if (logg.isDebugEnabled()) {
+							logg.debug("empty: " + wspolneRekordy.isEmpty());  
+						}
+						pokazRozneRekordy((SortedSet<Klucz>)wspolneRekordy,
 								wzorzec.getDbconnection(),
 								kopia.getDbconnection());
+					} else {
+						logg.debug("retain nic nie zmienia");
 					}
 				}
 			} else {
@@ -199,21 +213,24 @@ public class Porownywacz {
             throws IOException {
         String wypRozn = "";
 
-        if (co.removeAll(doCzego)) {
-            if (!co.isEmpty()) {  // są rekordy w różnicy
-                logg.debug(komunikat);
-                zapisywacz.write("\n" + komunikat + ":\n");
-                for (Iterator<Klucz> it = co.iterator(); it.hasNext();) {
-                    Klucz kl = it.next();
-                    for (int ii = 0; ii < kl.getLista().size(); ii++) {
-                        wypRozn += kl.getLista().get(ii) + "|";
-                    }
-                    wypRozn = wypRozn.substring(0, wypRozn.length() - 1);
-                    zapisywacz.write(wypRozn + "\n");
-                    wypRozn = "";
+        logg.debug("pokazRoznice");
+        wyswietlDebugKluczy(co);
+        wyswietlDebugKluczy(doCzego);
+        
+        co.removeAll(doCzego);
+        if (!co.isEmpty()) {  // są rekordy w różnicy
+            logg.debug(komunikat);
+            zapisywacz.write("\n" + komunikat + ":\n");
+            for (Iterator<Klucz> it = co.iterator(); it.hasNext();) {
+                Klucz kl = it.next();
+                for (int ii = 0; ii < kl.getLista().size(); ii++) {
+                    wypRozn += kl.getLista().get(ii) + "|";
                 }
-
+                wypRozn = wypRozn.substring(0, wypRozn.length() - 1);
+                zapisywacz.write(wypRozn + "\n");
+                wypRozn = "";
             }
+
         }
     }
 
@@ -231,9 +248,11 @@ public class Porownywacz {
         zapisywacz.write("\nRóżne rekordy w obu bazach\n");
         for (Klucz iter : wspolne) {
             sqlStatement = tworzenieSelecta(iter);
+            
             if (logg.isTraceEnabled()) {
-                logg.trace(sqlStatement);
+                logg.trace("sqlStatement: " + sqlStatement);
             }
+            
             prepStWzor = wzorzecConn.prepareStatement(sqlStatement);
             resultWzor = prepStWzor.executeQuery();
             prepStKopia = kopiaConn.prepareStatement(sqlStatement);

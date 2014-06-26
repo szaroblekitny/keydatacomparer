@@ -28,10 +28,6 @@ public abstract class BazaDanych {
     protected String username;
     protected String userpassword;
     
-    /// this comment is only for git testing purpose.
-    /// $Id: $
-    
-    
     protected String connectUrl;
     /**
      * Database connection
@@ -68,6 +64,7 @@ public abstract class BazaDanych {
      * Gives connection to the database.
      * 
      * @return the database connection
+     * @throws java.sql.SQLException
      */
     public abstract Connection databaseConnection()
             throws SQLException;
@@ -151,6 +148,14 @@ public abstract class BazaDanych {
      */
     public ArrayList<Tabela> getTabele() {
         return tabele;
+    }
+    
+    /**
+     * 
+     * @return String with schema and database for displaing
+     */
+    public String getSchemaAndDatabaseName() {
+    	return this.database + ":" + this.username;
     }
 
     
