@@ -89,7 +89,7 @@ public class Porownywacz {
             // wzorcowej.
             wzorzec.getFields(tabela);
 
-            ArrayList<Tabela.KolumnyTabeli> polaTabeli = tabela.getPolaTabeli();
+            ArrayList<KolumnaTabeli> polaTabeli = tabela.getPolaTabeli();
 
             if (logg.isDebugEnabled()) {
                 for (int ii = 0; ii < polaTabeli.size(); ii++) {
