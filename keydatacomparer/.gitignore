@@ -4,3 +4,6 @@
 /javadoc
 /keydatacomparer.out.xml
 /lib
+/build
+/target/
+/.settings/
