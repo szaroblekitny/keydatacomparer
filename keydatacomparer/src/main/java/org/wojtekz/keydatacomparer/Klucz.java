@@ -20,15 +20,18 @@ import org.apache.log4j.Logger;
  * @author Wojciech Zaręba
  */
 public class Klucz implements Comparable<Klucz> {
-    private static Logger logg = Logger.getLogger(Klucz.class.getName());
+    private final static Logger logg = Logger.getLogger(Klucz.class.getName());
     private ArrayList<String> lista = new ArrayList<>();
     private int dlugosc;
     
+    /**
+     * Cobstructor assigns parameter to private field.
+     * 
+     * @param listka
+     */
     public Klucz(ArrayList<String> listka) {
-        super();
         this.lista.addAll(listka);
         this.dlugosc = this.lista.size();
-        // logg.debug("Wielk. listy: " + this.dlugosc);
         if (logg.isTraceEnabled()) {
             for (int ii = 0; ii < this.dlugosc; ii++) {
                 logg.trace("ii: " + ii + "->" + this.lista.get(ii));
@@ -60,12 +63,14 @@ public class Klucz implements Comparable<Klucz> {
         for (int ii = 0; ii < this.getDlugosc(); ii++) {
             lancuszek = this.lista.get(ii) + "$%^";
             if (logg.isTraceEnabled()) {
-            logg.trace("ii " + ii + ": " + lancuszek);
+            	logg.trace("ii " + ii + ": " + lancuszek);
             }
             lancuchListy += lancuszek;
         }
         
-        logg.trace("lancuchListy: " + lancuchListy);
+        if (logg.isTraceEnabled()) {
+        	logg.trace("lancuchListy: " + lancuchListy);
+        }
         
         for (int jj = 0; jj < innyArray.size(); jj++) {
             lancuszek = innyArray.get(jj) + "$%^";
@@ -75,7 +80,9 @@ public class Klucz implements Comparable<Klucz> {
             lancuchInnejListy += lancuszek;
         }
         
-        logg.trace("lancuchInnejListy: " + lancuchInnejListy);
+        if (logg.isTraceEnabled()) {
+        	logg.trace("lancuchInnejListy: " + lancuchInnejListy);
+        }
         
         if ("".equals(lancuchListy) || "".equals(lancuchInnejListy)) {
             // nigdy nie zachodzi
@@ -84,7 +91,10 @@ public class Klucz implements Comparable<Klucz> {
             wynikPorownania = lancuchListy.compareTo(lancuchInnejListy);
         }
         
-        logg.trace("wynikPorownania: " + wynikPorownania);
+        if (logg.isTraceEnabled()) {
+        	logg.trace("wynikPorownania: " + wynikPorownania);
+        }
+        
         return wynikPorownania;
     }
 

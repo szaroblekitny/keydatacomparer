@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
  */
 public class ObsluzPliki {
 
-    private static Logger logg = Logger.getLogger(ObsluzPliki.class.getName());
+    private final static Logger logg = Logger.getLogger(ObsluzPliki.class.getName());
     static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
     private SchemaFactory factory;
     private File plikXML;
@@ -86,14 +86,19 @@ public class ObsluzPliki {
         this.factory = SchemaFactory.newInstance(W3C_XML_SCHEMA);
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        // docFactory.setValidating(true);
         docFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = docFactory.newDocumentBuilder();
         Document docxml = dBuilder.parse(plikXML);
-        logg.debug(docxml.getBaseURI());
+        
+        if (logg.isDebugEnabled()) {
+        	logg.debug(docxml.getBaseURI());
+        }
         docFactory.setValidating(true);
         Document docxsd = dBuilder.parse(plikXSD);
-        logg.debug(docxsd.getBaseURI());
+        if (logg.isDebugEnabled()) {
+        	logg.debug(docxsd.getBaseURI());
+        }
+        
         // tu wiemy, że oba pliki są plikami XML
         // teraz trzeba sprawdzić, że plik xsd jest poprawnym plikiem xsd
         Schema schema = factory.newSchema(plikXSD);
@@ -101,10 +106,14 @@ public class ObsluzPliki {
         Source source = new StreamSource(plikXML);
         // Sprawdzenie
         validator.validate(source);
-        logg.info(plikXML + " jest poprawny");
+        
+        if (logg.isDebugEnabled()) {
+        	logg.info(plikXML + " jest poprawny");
+        }
         Element xmlElem = docxml.getDocumentElement();
-        logg.debug("Root: " + xmlElem.getNodeName());
-
+        if (logg.isDebugEnabled()) {
+        	logg.debug("Root: " + xmlElem.getNodeName());
+        }
         ///--- sourcedatabase
         NodeList sourcedbNL = docxml.getElementsByTagName("sourcedatabase");
         if (sourcedbNL != null && sourcedbNL.getLength() > 0) {
@@ -116,19 +125,29 @@ public class ObsluzPliki {
                     Element elm = (Element) node;
                     NodeList nodeList = elm.getElementsByTagName("host");
                     this.sourcehostname = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("sourcehostname: " + this.sourcehostname);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("sourcehostname: " + this.sourcehostname);
+                    }
                     nodeList = elm.getElementsByTagName("port");
                     this.sourceportnumber = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("sourceportnumber: " + this.sourceportnumber);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("sourceportnumber: " + this.sourceportnumber);
+                    }
                     nodeList = elm.getElementsByTagName("name");
                     this.sourcedatabase = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("sourcedatabase: " + this.sourcedatabase);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("sourcedatabase: " + this.sourcedatabase);
+                    }
                     nodeList = elm.getElementsByTagName("username");
                     this.sourceusername = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("sourceusername: " + this.sourceusername);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("sourceusername: " + this.sourceusername);
+                    }
                     nodeList = elm.getElementsByTagName("userpassword");
                     this.sourceuserpassword = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("sourceuserpassword: " + this.sourceuserpassword);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("sourceuserpassword: " + this.sourceuserpassword);
+                    }
                 }
             }
         }
@@ -144,19 +163,29 @@ public class ObsluzPliki {
                     Element elm = (Element) node;
                     NodeList nodeList = elm.getElementsByTagName("host");
                     this.comphostname = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("comphostname: " + this.comphostname);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("comphostname: " + this.comphostname);
+                    }
                     nodeList = elm.getElementsByTagName("port");
                     this.compportnumber = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("compportnumber: " + this.compportnumber);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("compportnumber: " + this.compportnumber);
+                    }
                     nodeList = elm.getElementsByTagName("name");
                     this.compdatabase = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("compdatabase: " + this.compdatabase);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("compdatabase: " + this.compdatabase);
+                    }
                     nodeList = elm.getElementsByTagName("username");
                     this.compusername = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("compusername: " + this.compusername);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("compusername: " + this.compusername);
+                    }
                     nodeList = elm.getElementsByTagName("userpassword");
                     this.compuserpassword = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    logg.debug("compuserpassword: " + this.compuserpassword);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug("compuserpassword: " + this.compuserpassword);
+                    }
                 }
             }
         }
@@ -177,7 +206,9 @@ public class ObsluzPliki {
                 }
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     tableName = node.getTextContent();
-                    logg.debug(ii + ": " + tableName);
+                    if (logg.isDebugEnabled()) {
+                    	logg.debug(ii + ": " + tableName);
+                    }
                     this.getNazwyTabel().add(tableName);
                 }
             }

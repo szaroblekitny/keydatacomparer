@@ -46,8 +46,9 @@ public class OracleDB extends BazaDanych {
         // "jdbc:oracle:thin:hr/password@localhost:1521:wzdata"
         this.connectUrl = "jdbc:oracle:thin:" + this.username + "/" + this.userpassword
                 + "@" + this.hostname + ":" + this.portnumber + ":" + this.database;
-
-        logg.debug("URL: " + connectUrl);
+        if (logg.isDebugEnabled()) {
+        	logg.debug("URL: " + connectUrl);
+        }
 
         OracleDataSource ods = new OracleDataSource();
         ods.setURL(this.connectUrl);
@@ -60,8 +61,9 @@ public class OracleDB extends BazaDanych {
 
     @Override
     public void addPrimaryKey(Tabela tabelka) {
-        logg.debug("addDatabaseTable: " + tabelka.getNazwaTabeli());
-        
+    	if (logg.isDebugEnabled()) {
+    		logg.debug("addDatabaseTable: " + tabelka.getNazwaTabeli());
+    	}
         ArrayList<String> kluGlu = new ArrayList<>();  // klucz główny
         PreparedStatement prepState;
         ResultSet result;
@@ -76,7 +78,9 @@ public class OracleDB extends BazaDanych {
                     + "and acc.owner = alc.owner "
                     + "and acc.constraint_name = alc.constraint_name "
                     + "order by acc.position";
-            logg.debug(sqlStatement);
+            if (logg.isDebugEnabled()) {
+            	logg.debug("SQL:" + sqlStatement);
+            }
             prepState = getDbconnection().prepareStatement(sqlStatement);
             result = prepState.executeQuery();
 
@@ -84,9 +88,11 @@ public class OracleDB extends BazaDanych {
                 poleKlucza = result.getString(1);
                 if (poleKlucza != null) {
                     if (kluGlu.add(poleKlucza)) {
-                        logg.debug("Do klucza dodaję pole " + poleKlucza);
+                    	if (logg.isDebugEnabled()) {
+                    		logg.debug("Do klucza dodaję pole " + poleKlucza);
+                    	}
                     } else {
-                        logg.warn("Dodanie nieudane");
+                        logg.warn("Dodanie klucza nieudane");
                     }
                 }
             }
@@ -183,8 +189,10 @@ public class OracleDB extends BazaDanych {
             		logg.error("Nie można policzyć");
             	}
             	ileRekordow = result.getInt(1);
-            	logg.debug("Liczba rekordów (" + getSchemaAndDatabaseName() + "/"
+            	if (logg.isDebugEnabled()) {
+            		logg.debug("Liczba rekordów (" + getSchemaAndDatabaseName() + "/"
             			+ tabelka.getNazwaTabeli() +"): " + ileRekordow);
+            	}
             	result.close();
             	
             } catch (SQLException sex) {
@@ -210,7 +218,9 @@ public class OracleDB extends BazaDanych {
 				// ucinamy końcowy przecinek
 				sqlStatement = sqlStatement.substring(0,
 						sqlStatement.length() - 2);
-				logg.debug(sqlStatement);
+				if (logg.isDebugEnabled()) {
+					logg.debug(sqlStatement);
+				}
 				prepState = getDbconnection().prepareStatement(sqlStatement);
 				result = prepState.executeQuery();
 				
@@ -226,12 +236,15 @@ public class OracleDB extends BazaDanych {
 						logg.trace("Rec: " + daneRekordu);
 					}
 
-					if (!daneKluczy.add(new Klucz(rekord))) {
+					if (!daneKluczy.add(new Klucz(rekord)) && logg.isDebugEnabled()) {
 						logg.debug("Nieudaczne dodanie");
 					}
 					rekord.clear();
 				} // while (result.next())
-				logg.debug("Ile w kluczach: " + daneKluczy.size());
+				
+				if (logg.isDebugEnabled()) {
+					logg.debug("Ile w kluczach: " + daneKluczy.size());
+				}
 			}
 
         } catch (SQLException ex) {

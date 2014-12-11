@@ -25,8 +25,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-
-// import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -45,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 public class Porownywacz {
 
-    private static Logger logg = Logger.getLogger(Porownywacz.class.getName());
+    private final static Logger logg = Logger.getLogger(Porownywacz.class.getName());
     private Set<Klucz> daneKluczyWzorcowych;
     private Set<Klucz> daneKluczyPorownywanych;
     private Set<Klucz> roznicaWzorca = new HashSet<>();
@@ -55,7 +53,6 @@ public class Porownywacz {
 
     public Porownywacz(FileWriter writer) throws IOException {
         zapisywacz = writer;
-        // logg.setLevel(Level.TRACE);
     }
 
     /**
@@ -125,21 +122,26 @@ public class Porownywacz {
              * różnice.
              */
             daneKluczyWzorcowych = wzorzec.daneKluczowe(tabela);
-            if (logg.isDebugEnabled()) {
-            	if (daneKluczyWzorcowych != null)
+            
+            if (daneKluczyWzorcowych != null) {
+            	if (logg.isDebugEnabled()) {
             		wyswietlDebugKluczy((SortedSet<Klucz>) daneKluczyWzorcowych);
-                else
-                	logg.warn("Brak danych z kluczy głównych dla "
+            	}
+            } else {
+                logg.warn("Brak danych z kluczy głównych dla "
                            + wzorzec.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
             daneKluczyPorownywanych = kopia.daneKluczowe(tabela);
-            if (logg.isDebugEnabled()) {
-            	if (daneKluczyPorownywanych != null)
-            		wyswietlDebugKluczy((SortedSet<Klucz>) daneKluczyPorownywanych);
-            	else
-            		logg.warn("Brak danych z kluczy głównych dla "
-                            + kopia.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
+            
+           	if (daneKluczyPorownywanych != null) {
+           		if (logg.isDebugEnabled()) {
+           			wyswietlDebugKluczy((SortedSet<Klucz>) daneKluczyPorownywanych);
+           		}
+           	}
+           	else {
+           		logg.warn("Brak danych z kluczy głównych dla "
+                       + kopia.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
             logg.debug("Różnica wzorca");
@@ -193,7 +195,9 @@ public class Porownywacz {
     private void wyswietlDebugKluczy(SortedSet<Klucz> klucze) {
 		if (klucze != null) {
 			String str = "";
-			logg.debug("Dane kluczy porow: " + klucze.size());
+			if (logg.isDebugEnabled()) {
+				logg.debug("Dane kluczy porow: " + klucze.size());
+			}
 			for (Klucz iterator : klucze) {
 				for (int ii = 0; ii < iterator.getDlugosc(); ii++) {
 					str += iterator.getLista().get(ii) + " ";
@@ -219,7 +223,9 @@ public class Porownywacz {
         
         co.removeAll(doCzego);
         if (!co.isEmpty()) {  // są rekordy w różnicy
-            logg.debug(komunikat);
+        	if (logg.isDebugEnabled()) {
+        		logg.debug("Komunikat: " + komunikat);
+        	}
             zapisywacz.write("\n" + komunikat + ":\n");
             for (Iterator<Klucz> it = co.iterator(); it.hasNext();) {
                 Klucz kl = it.next();
@@ -247,7 +253,7 @@ public class Porownywacz {
 
         zapisywacz.write("\nRóżne rekordy w obu bazach\n");
         for (Klucz iter : wspolne) {
-            sqlStatement = tworzenieSelecta(iter);
+            sqlStatement = BazaDanych.tworzenieSelecta(tabela, iter);
             
             if (logg.isTraceEnabled()) {
                 logg.trace("sqlStatement: " + sqlStatement);
@@ -258,7 +264,6 @@ public class Porownywacz {
             prepStKopia = kopiaConn.prepareStatement(sqlStatement);
             resultKopia = prepStKopia.executeQuery();
             ResultSetMetaData rsmd;
-            // logg.debug("Wz: " + resultWzor.);
 
             boolean saRozne;
             String wartWzor;
@@ -303,7 +308,9 @@ public class Porownywacz {
 
         for (int ii = 1; ii <= tabela.getPolaTabeli().size(); ii++) {
             ileZnakow = tabela.getPolaTabeli().get(ii - 1).getSzerokosc();
-            logg.trace("znaki: " + ileZnakow);
+            if (logg.isTraceEnabled()) {
+            	logg.trace("znaki: " + ileZnakow);
+            }
             pole = result.getString(ii);
             if (pole == null) {
                 pole = "";
@@ -311,7 +318,9 @@ public class Porownywacz {
 
             // jeśli typ danych zawiera CHAR, to formatuj na lewo
             typPola = tabela.getPolaTabeli().get(ii - 1).getTypDanych();
-            logg.trace("Typ pola: " + typPola);
+            if (logg.isTraceEnabled()) {
+            	logg.trace("Typ pola: " + typPola);
+            }
             if (typPola.indexOf("CHAR") > 0) {
                 pole = padRight(pole, ileZnakow);
             } else {
@@ -322,39 +331,13 @@ public class Porownywacz {
 
         linia = linia.substring(0, linia.length() - 1);
         linia = linia.trim();
-        logg.trace("linia: " + linia);
+        if (logg.isTraceEnabled()) {
+        	logg.trace("linia: " + linia);
+        }
         zapisywacz.write(linia + "\n");
     }
 
-    // --------------------------------------------------------------------------------------
-    // TODO przenieść do podklasy BazaDanych
-    private String tworzenieSelecta(Klucz klucz) {
-
-        String sqlStatement = "select ";
-
-        for (int ii = 0; ii < tabela.getPolaTabeli().size(); ii++) {
-            sqlStatement += tabela.getPolaTabeli().get(ii).getNazwaKolumnny() + ", ";
-        }
-        // ucinamy końcowy przecinek
-        sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
-        sqlStatement += " from " + tabela.getNazwaTabeli() + " where ";
-
-        for (int jj = 0; jj < tabela.getKluczGlowny().size(); jj++) {
-            sqlStatement += tabela.getKluczGlowny().get(jj) + " = '"
-                    + klucz.getLista().get(jj) + "' and ";
-        }
-        // ucinamy końcowy and 
-        sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 5);
-
-        sqlStatement += " order by ";
-        for (int kk = 0; kk < tabela.getKluczGlowny().size(); kk++) {
-            sqlStatement += tabela.getKluczGlowny().get(kk) + ", ";
-        }
-        // ucinamy końcowy przecinek
-        sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
-
-        return sqlStatement;
-    }
+    
 
     // --------------------------------------------------------------------------------------
     private String padRight(String str, int n) {

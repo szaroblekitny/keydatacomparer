@@ -23,94 +23,22 @@ import org.apache.log4j.Logger;
  */
 public class Tabela {
 
-    private static Logger logg = Logger.getLogger(Tabela.class.getName());
+    private final static Logger logg = Logger.getLogger(Tabela.class.getName());
 
-    /**
-     *  Represents fields (columns) of the table. It have properties for each
-     *  field: field name, data type, and for numeric fields precision and scale.
-     */
-    public class KolumnyTabeli {
-        /*
-         *   TODO
-         * 
-         *   Kolumny tabel powinny mieć znormalizowane nazwy typów, niezależne od
-         *   implementacji bazy danych: char, number, date, boolean. W klasie implementacyjnej
-         *   powinien być transformator typów, który przekształca typy używane
-         *   w konkretnej bazie danych na typy znormalizowane.
-         *   Ale to nie na tym etapie projektu. Na razie niech to zadziała dla Oracle'a.
-         */
-
-        private String nazwaKolumnny;
-        private String typDanych;
-        private int precyzja;
-        private int skala;
-        private int szerokosc;
-
-        /**
-         * Default constructor. Do nothing.
-         */
-        KolumnyTabeli() {
-            // super();
-            // logg.debug("Kolumna tabeli " + nazwaTabeli + ":");
-        }
-
-        /**
-         * @return the field name
-         */
-        String getNazwaKolumnny() {
-            return nazwaKolumnny;
-        }
-
-        /**
-         * @return the datatype
-         */
-        String getTypDanych() {
-            return typDanych;
-        }
-
-        /**
-         * @return the precision
-         */
-        int getPrecyzja() {
-            return precyzja;
-        }
-
-        /**
-         * @return the scale
-         */
-        int getSkala() {
-            return skala;
-        }
-        
-        /**
-         * @return the length of data
-         */
-        int getSzerokosc() {
-            return szerokosc;
-        }
-        
-    }
-    // End of class KolumnyTabeli
-    
     // Properties of class Tabela
     private String nazwaTabeli;
     private ArrayList<String> kluczGlowny = new ArrayList<>();
-    private ArrayList<KolumnyTabeli> polaTabeli = new ArrayList<>();
+    private ArrayList<KolumnaTabeli> polaTabeli = new ArrayList<>();
 
-    
-    /**
-     * Empty constructor, nazwaTabeli and kluczGlowny must be set separately.
-     */
-    public Tabela() {
-        logg.debug("Nowa pusta tabela");
-    }
     
     /**
      * Creates table with name only, the rest must be included later.
      * @param nazwa
      */
     public Tabela(String nazwa) {
-        logg.debug("Nowa pusta tabela " + nazwa);
+    	if (logg.isDebugEnabled()) {
+    		logg.debug("Nowa pusta tabela " + nazwa);
+    	}
         this.nazwaTabeli = nazwa;
     }
     
@@ -128,11 +56,13 @@ public class Tabela {
 
     public void dodajKolumne(String kolumna, String typ) {
         
-        KolumnyTabeli kolumnaTabeli = new KolumnyTabeli();
-        kolumnaTabeli.nazwaKolumnny = kolumna;
-        kolumnaTabeli.typDanych = typ;
+        KolumnaTabeli kolumnaTabeli = new KolumnaTabeli();
+        kolumnaTabeli.setNazwaKolumnny(kolumna);
+        kolumnaTabeli.setTypDanych(typ);
         boolean add = polaTabeli.add(kolumnaTabeli);
-        logg.debug("Dodałem kolumnę (1) " + kolumna + "? " + add);
+        if (logg.isDebugEnabled()) {
+        	logg.debug("Dodałem kolumnę (1) " + kolumna + "? " + add);
+        }
     }
     
     public void dodajKolumne(String kolumna,
@@ -141,27 +71,23 @@ public class Tabela {
             int skala,
             int szerokosc) {
         
-        KolumnyTabeli kolumnaTabeli = new KolumnyTabeli();
-        kolumnaTabeli.nazwaKolumnny = kolumna;
-        kolumnaTabeli.typDanych = typ;
-        kolumnaTabeli.precyzja = precyzja;
-        kolumnaTabeli.skala = skala;
-        kolumnaTabeli.szerokosc = szerokosc;
+        KolumnaTabeli kolumnaTabeli = new KolumnaTabeli();
+        kolumnaTabeli.setNazwaKolumnny(kolumna);
+        kolumnaTabeli.setTypDanych(typ);
+        kolumnaTabeli.setPrecyzja(precyzja);
+        kolumnaTabeli.setSkala(skala);
+        kolumnaTabeli.setSzerokosc(szerokosc);
         if (polaTabeli.add(kolumnaTabeli)) {
             if (logg.isTraceEnabled()) {
                 logg.trace("Dodałem kolumnę " + kolumna);
             }
         } else {
-            logg.debug("Dodanie kolumny " + kolumna + " nieudane");
+        	if (logg.isDebugEnabled()) {
+        		logg.debug("Dodanie kolumny " + kolumna + " nieudane");
+        	}
         }
     }
     
-    /**
-     * @param nazwaTabeli the name of table to set
-     */
-    public void setNazwaTabeli(String nazwaTabeli) {
-        this.nazwaTabeli = nazwaTabeli;
-    }
 
     /**
      * @param kluczGlowny the list of fields for primary key to set
@@ -187,7 +113,7 @@ public class Tabela {
     /**
      * @return the polaTabeli
      */
-    public ArrayList<KolumnyTabeli> getPolaTabeli() {
+    public ArrayList<KolumnaTabeli> getPolaTabeli() {
         return polaTabeli;
     }
 

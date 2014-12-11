@@ -9,6 +9,7 @@
  in any way, you may only recover direct damages up to the amount you
  paid for it (that is zero if you did not pay anything).
  */
+
 package org.wojtekz.keydatacomparer;
 
 import java.io.File;
@@ -18,7 +19,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.BasicConfigurator;
-// import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
@@ -46,7 +46,6 @@ public class KeyDataComparer {
      */
     public static void main(String[] args) {
         BasicConfigurator.configure();
-        // logg.setLevel(Level.INFO);
         logg.info("Key data comparer starts");
 
         if (args.length != 1) {
