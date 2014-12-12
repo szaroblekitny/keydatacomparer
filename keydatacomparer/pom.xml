@@ -1,12 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.wojtekz</groupId>
-	<artifactId>keydatacomparer</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>Porównanie kluczowych danych</name>
-
-	<properties>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.wojtekz</groupId>
+  <artifactId>keydatacomparer</artifactId>
+  <packaging>jar</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>Porównanie kluczowych danych</name>
+  
+  <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<log4j.version>1.2.17</log4j.version>
@@ -35,8 +36,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
