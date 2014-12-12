@@ -51,9 +51,14 @@ public class Tabela {
     public Tabela(String nazwa, ArrayList<String> kluGlu) {
         this.nazwaTabeli = nazwa;
         this.kluczGlowny = kluGlu;
-        // KolumnyTabeli kolumny = new KolumnyTabeli();
     }
 
+    /**
+     * Adds column described only by name and type.
+     * 
+     * @param kolumna column name
+     * @param typ column type
+     */
     public void dodajKolumne(String kolumna, String typ) {
         
         KolumnaTabeli kolumnaTabeli = new KolumnaTabeli();
@@ -65,6 +70,15 @@ public class Tabela {
         }
     }
     
+    /**
+     * Adds column for more detailed description.
+     * 
+     * @param kolumna column name
+     * @param typ column typ
+     * @param precyzja precision
+     * @param skala scale
+     * @param szerokosc width
+     */
     public void dodajKolumne(String kolumna,
             String typ,
             int precyzja,
