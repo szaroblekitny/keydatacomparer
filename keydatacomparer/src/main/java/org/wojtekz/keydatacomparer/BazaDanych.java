@@ -24,7 +24,7 @@ import java.util.SortedSet;
 public abstract class BazaDanych {
     protected String database;
     protected String hostname;
-    protected String portnumber;
+    protected int portnumber;
     protected String username;
     protected String userpassword;
     
@@ -50,7 +50,7 @@ public abstract class BazaDanych {
      */
     public BazaDanych(String nazwaBazy,
                       String nazwaHosta,
-                      String numerPortu,
+                      int numerPortu,
                       String schemat,
                       String haslo) {
         this.database = nazwaBazy;
@@ -95,33 +95,39 @@ public abstract class BazaDanych {
     public abstract SortedSet<Klucz> daneKluczowe(Tabela tabelka);
     
     
-    // --------------------------------------------------------------------------------------
+    /**
+     * Select data from database to compare it.
+     * 
+     * @param tabela
+     * @param klucz
+     * @return SQL select for getting data to compare
+     */
     public static String tworzenieSelecta(Tabela tabela, Klucz klucz) {
 
-        String sqlStatement = "select ";
+        StringBuilder sqlStatement = new StringBuilder("select ");
 
         for (int ii = 0; ii < tabela.getPolaTabeli().size(); ii++) {
-            sqlStatement += tabela.getPolaTabeli().get(ii).getNazwaKolumnny() + ", ";
+            sqlStatement.append(tabela.getPolaTabeli().get(ii).getNazwaKolumnny()).append(", ");
         }
         // ucinamy końcowy przecinek
-        sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
-        sqlStatement += " from " + tabela.getNazwaTabeli() + " where ";
+        sqlStatement.substring(0, sqlStatement.toString().length() - 2);
+        sqlStatement.append(" from ").append(tabela.getNazwaTabeli()).append(" where ");
 
         for (int jj = 0; jj < tabela.getKluczGlowny().size(); jj++) {
-            sqlStatement += tabela.getKluczGlowny().get(jj) + " = '"
-                    + klucz.getLista().get(jj) + "' and ";
+            sqlStatement.append(tabela.getKluczGlowny().get(jj)).append(" = '")
+                    .append(klucz.getLista().get(jj)).append("' and ");
         }
         // ucinamy końcowy and 
-        sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 5);
+        sqlStatement.substring(0, sqlStatement.toString().length() - 5);
 
-        sqlStatement += " order by ";
+        sqlStatement.append(" order by ");
         for (int kk = 0; kk < tabela.getKluczGlowny().size(); kk++) {
-            sqlStatement += tabela.getKluczGlowny().get(kk) + ", ";
+            sqlStatement.append(tabela.getKluczGlowny().get(kk)).append(", ");
         }
         // ucinamy końcowy przecinek
-        sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
+        sqlStatement.substring(0, sqlStatement.toString().length() - 2);
 
-        return sqlStatement;
+        return sqlStatement.toString();
     }
 
     /**
@@ -155,7 +161,7 @@ public abstract class BazaDanych {
     /**
      * @return the portnumber
      */
-    public String getPortnumber() {
+    public int getPortnumber() {
         return portnumber;
     }
 
