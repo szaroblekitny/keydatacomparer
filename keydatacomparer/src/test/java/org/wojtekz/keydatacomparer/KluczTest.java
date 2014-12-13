@@ -36,5 +36,19 @@ public class KluczTest {
 		Assert.assertEquals(3, w2);
 		
 	}
+	
+	@Test
+	public void testCompareString() {
+		int w1 = "Alfb".compareTo("Alfa");
+		Assert.assertEquals(1, w1);
+		int w2 = "Alfb".compareTo("Alfaa");
+		Assert.assertEquals(1, w2);
+		int w3 = "Alfb".compareTo("Alfd");
+		Assert.assertEquals(-2, w3);
+		int w4 = "Alfb".compareTo("Alfg");
+		Assert.assertEquals(-5, w4);
+		int w5 = "Alfb".compareTo("Alfń");
+		Assert.assertEquals(-226, w5);
+	}
 
 }
