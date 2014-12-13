@@ -3,6 +3,7 @@ package org.wojtekz.keydatacomparer;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,8 @@ public class TabelaTest {
 
 	@Before
 	public void setUp() throws Exception {
+		PropertyConfigurator.configure(TabelaTest.class.getClassLoader()
+                .getResource("log4j.properties"));
 		kluczyk.add("K1");
 		kluczyk.add("K2");
 		kluczyk.add("K3");
@@ -33,7 +36,14 @@ public class TabelaTest {
 
 	@Test
 	public void testDodajKolumneStringStringIntIntInt() {
-		Assert.fail("Not yet implemented");
+		logg.debug("testDodajKolumneStringStringIntIntInt fired");
+		tabela.dodajKolumne("K1", "int");
+		tabela.dodajKolumne("K2", "number", 10, 2, 10);
+		tabela.dodajKolumne("K3", "number", 20, 5, 22);
+		Assert.assertEquals(10, tabela.getPolaTabeli().get(1).getPrecyzja());
+		Assert.assertEquals(5, tabela.getPolaTabeli().get(2).getSkala());
+		Assert.assertEquals(22, tabela.getPolaTabeli().get(2).getSzerokosc());
+		Assert.assertEquals(20, tabela.getPolaTabeli().get(2).getPrecyzja());
 	}
 
 }
