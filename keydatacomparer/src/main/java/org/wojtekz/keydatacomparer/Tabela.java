@@ -65,8 +65,8 @@ public class Tabela {
         kolumnaTabeli.setNazwaKolumnny(kolumna);
         kolumnaTabeli.setTypDanych(typ);
         boolean add = polaTabeli.add(kolumnaTabeli);
-        if (logg.isDebugEnabled()) {
-        	logg.debug("Dodałem kolumnę (1) " + kolumna + "? " + add);
+        if (logg.isTraceEnabled()) {
+        	logg.trace("Dodałem kolumnę " + kolumna + " - " + add);
         }
     }
     
