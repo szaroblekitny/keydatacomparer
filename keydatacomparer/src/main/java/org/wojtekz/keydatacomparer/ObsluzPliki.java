@@ -43,12 +43,12 @@ public class ObsluzPliki {
     private File plikXSD;
     private String sourcedatabase;
     private String sourcehostname;
-    private String sourceportnumber;
+    private int sourceportnumber;
     private String sourceusername;
     private String sourceuserpassword;
     private String compdatabase;
     private String comphostname;
-    private String compportnumber;
+    private int compportnumber;
     private String compusername;
     private String compuserpassword;
     private ArrayList<String> nazwyTabel = new ArrayList<>();
@@ -129,7 +129,7 @@ public class ObsluzPliki {
                     	logg.debug("sourcehostname: " + this.sourcehostname);
                     }
                     nodeList = elm.getElementsByTagName("port");
-                    this.sourceportnumber = nodeList.item(0).getChildNodes().item(0).getNodeValue();
+                    this.sourceportnumber = Integer.parseInt(nodeList.item(0).getChildNodes().item(0).getNodeValue());
                     if (logg.isDebugEnabled()) {
                     	logg.debug("sourceportnumber: " + this.sourceportnumber);
                     }
@@ -167,7 +167,7 @@ public class ObsluzPliki {
                     	logg.debug("comphostname: " + this.comphostname);
                     }
                     nodeList = elm.getElementsByTagName("port");
-                    this.compportnumber = nodeList.item(0).getChildNodes().item(0).getNodeValue();
+                    this.compportnumber = Integer.parseInt(nodeList.item(0).getChildNodes().item(0).getNodeValue());
                     if (logg.isDebugEnabled()) {
                     	logg.debug("compportnumber: " + this.compportnumber);
                     }
@@ -250,7 +250,7 @@ public class ObsluzPliki {
     /**
      * @return the sourceportnumber
      */
-    public String getSourceportnumber() {
+    public int getSourceportnumber() {
         return sourceportnumber;
     }
 
@@ -285,7 +285,7 @@ public class ObsluzPliki {
     /**
      * @return the compportnumber
      */
-    public String getCompportnumber() {
+    public int getCompportnumber() {
         return compportnumber;
     }
 

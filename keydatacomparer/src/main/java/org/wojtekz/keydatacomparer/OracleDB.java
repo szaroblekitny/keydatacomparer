@@ -29,7 +29,7 @@ public class OracleDB extends BazaDanych {
 
     public OracleDB(String nazwaBazy,
             String nazwaHosta,
-            String numerPortu,
+            int numerPortu,
             String schemat,
             String haslo) {
         super(nazwaBazy, nazwaHosta, numerPortu, schemat, haslo);
