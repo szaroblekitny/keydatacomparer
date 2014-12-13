@@ -52,8 +52,8 @@ public class Klucz implements Comparable<Klucz> {
         int wynikPorownania = 0;
         // int wielkoscListy = lista.size();
         ArrayList<String> innyArray = innaLista.getLista();
-        String lancuchListy = "";
-        String lancuchInnejListy = "";
+        StringBuilder lancuchListy = new StringBuilder();
+        StringBuilder lancuchInnejListy = new StringBuilder();
         String lancuszek;
         
         if (logg.isTraceEnabled()) {
@@ -65,11 +65,11 @@ public class Klucz implements Comparable<Klucz> {
             if (logg.isTraceEnabled()) {
             	logg.trace("ii " + ii + ": " + lancuszek);
             }
-            lancuchListy += lancuszek;
+            lancuchListy.append(lancuszek);
         }
         
         if (logg.isTraceEnabled()) {
-        	logg.trace("lancuchListy: " + lancuchListy);
+        	logg.trace("lancuchListy: " + lancuchListy.toString());
         }
         
         for (int jj = 0; jj < innyArray.size(); jj++) {
@@ -77,18 +77,18 @@ public class Klucz implements Comparable<Klucz> {
             if (logg.isTraceEnabled()) {
                 logg.trace("jj " + jj + ": " + lancuszek);
             }
-            lancuchInnejListy += lancuszek;
+            lancuchInnejListy.append(lancuszek);
         }
         
         if (logg.isTraceEnabled()) {
-        	logg.trace("lancuchInnejListy: " + lancuchInnejListy);
+        	logg.trace("lancuchInnejListy: " + lancuchInnejListy.toString());
         }
         
-        if ("".equals(lancuchListy) || "".equals(lancuchInnejListy)) {
-            // nigdy nie zachodzi
+        if ("".equals(lancuchListy.toString()) || "".equals(lancuchInnejListy.toString())) {
+            // nigdy nie zachodzi w teorii
             wynikPorownania = 0;
         } else {
-            wynikPorownania = lancuchListy.compareTo(lancuchInnejListy);
+            wynikPorownania = lancuchListy.toString().compareTo(lancuchInnejListy.toString());
         }
         
         if (logg.isTraceEnabled()) {
