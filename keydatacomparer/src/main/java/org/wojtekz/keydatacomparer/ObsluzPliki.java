@@ -14,33 +14,35 @@ package org.wojtekz.keydatacomparer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
+
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.wojtekz.utils.SprawdzPlikXML;
 import org.xml.sax.SAXException;
 
 /**
- * Reads and examines XML files
+ * Reads and examines XML files.
+ * <ul>
+ * <li>checks if xml and xsd file exist</li>
+ * <li>checks xml file against xsd schema</li>
+ * <li>reads database connection parameters</li>
+ * <li>reads tables for comparison</li>
+ * <li>reads log parameters</li>
+ * </ul>
+ * 
+ * All is stored in the class properties. 
  *
  * @author Wojciech Zaręba
  */
 public class ObsluzPliki {
 
     private final static Logger logg = Logger.getLogger(ObsluzPliki.class.getName());
-    static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
-    private SchemaFactory factory;
-    private File plikXML;
-    private File plikXSD;
+    
     private String sourcedatabase;
     private String sourcehostname;
     private int sourceportnumber;
@@ -54,62 +56,43 @@ public class ObsluzPliki {
     private ArrayList<String> nazwyTabel = new ArrayList<>();
 
     /**
-     * Reads two files and checks if they are XML files
-     *
-     * @param plik1 the XML file
-     * @param plik2 the schema file
+     * Reads XML file and checks it against xsd/keydatacomparer.xsd file.
+     * 
+     * @param plikXML the XML configuration file.
+     * 
      * @throws IOException
      * @throws SAXException
      * @throws ParserConfigurationException
      */
-    public ObsluzPliki(String plik1, String plik2)
-            throws IOException, SAXException, ParserConfigurationException {
-        obsluga(plik1, plik2);
-    }
-
     public ObsluzPliki(String plikXML)
             throws IOException, SAXException, ParserConfigurationException {
         obsluga(plikXML, "xsd/keydatacomparer.xsd");
     }
+    
+    // public sprawdzenieFormalne
 
+    /**
+     * Service for configuration file.
+     * 
+     * @param plik1
+     * @param plik2
+     * @throws IOException
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     */
     private void obsluga(String plik1, String plik2)
             throws IOException, SAXException, ParserConfigurationException {
-        plikXML = new File(plik1);
-        plikXSD = new File(plik2);
+        File plikXML = new File(plik1);
+        File plikXSD = new File(plik2);
 
-        if (!plikXML.exists() || !plikXSD.exists()) {
-            logg.error("Szukam " + plikXML.getName() + " " + plikXML.exists());
-            logg.error("Szukam " + plikXSD.getName() + " " + plikXSD.exists());
-            throw new IOException("brak upragnionych plików");
-        }
-
-        this.factory = SchemaFactory.newInstance(W3C_XML_SCHEMA);
-
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        docFactory.setNamespaceAware(true);
-        DocumentBuilder dBuilder = docFactory.newDocumentBuilder();
-        Document docxml = dBuilder.parse(plikXML);
-        
-        if (logg.isDebugEnabled()) {
-        	logg.debug(docxml.getBaseURI());
-        }
-        docFactory.setValidating(true);
-        Document docxsd = dBuilder.parse(plikXSD);
-        if (logg.isDebugEnabled()) {
-        	logg.debug(docxsd.getBaseURI());
-        }
-        
-        // tu wiemy, że oba pliki są plikami XML
-        // teraz trzeba sprawdzić, że plik xsd jest poprawnym plikiem xsd
-        Schema schema = factory.newSchema(plikXSD);
-        Validator validator = schema.newValidator();
-        Source source = new StreamSource(plikXML);
-        // Sprawdzenie
-        validator.validate(source);
+        SprawdzPlikXML.sprawdzFormalnie(plikXSD, plikXML);
         
         if (logg.isDebugEnabled()) {
         	logg.info(plikXML + " jest poprawny");
         }
+        
+        Document docxml = SprawdzPlikXML.zrobDocXMLZpliku(plikXML);
+        
         Element xmlElem = docxml.getDocumentElement();
         if (logg.isDebugEnabled()) {
         	logg.debug("Root: " + xmlElem.getNodeName());
@@ -219,19 +202,6 @@ public class ObsluzPliki {
 
     }  // end of obsluga
 
-    /**
-     * @return the plikXML
-     */
-    public File getPlikXML() {
-        return plikXML;
-    }
-
-    /**
-     * @return the plikXSD
-     */
-    public File getPlikXSD() {
-        return plikXSD;
-    }
 
     /**
      * @return the sourcedatabase
