@@ -67,8 +67,9 @@ public class Porownywacz {
             BazaDanych kopia,
             ObsluzPliki obspli)
             throws IOException, SQLException {
+    	
+    	//  TODO !!! - usunąc parametry wzorzec i kopia - one są brane z obspli!!!
 
-        // logg.setLevel(Level.TRACE);
         for (int nrTabeli = 0; nrTabeli < obspli.getNazwyTabel().size(); nrTabeli++) {
 
             zapisywacz.write("---------------------------------------------\n");
