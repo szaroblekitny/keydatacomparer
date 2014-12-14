@@ -1,12 +1,9 @@
 package org.wojtekz.keydatacomparer;
 
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -16,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.wojtekz.utils.DaneTestowe;
 import org.wojtekz.utils.SprawdzPlikXML;
 import org.xml.sax.SAXException;
 
@@ -23,44 +21,12 @@ public class ObsluzPlikiTest {
 	private final static Logger logg = Logger.getLogger(ObsluzPlikiTest.class.getName());
 	
 	private static File testFile;
-	private static String nazwaPliku;
 	
 	private ArrayList<String> tabele;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		nazwaPliku = UUID.randomUUID().toString() + ".xml";
-		testFile = new File(nazwaPliku);
-		String zawartosc = "<keydatacomparer>                      \n" +
-				"    <databases>                                   \n" +
-				"        <sourcedatabase>                          \n" +
-				"          <host>localhost</host>                  \n" +
-				"            <port>1521</port>                     \n" +
-				"            <name>ora11</name>                    \n" +
-				"            <username>hr</username>               \n" +
-				"            <userpassword>password</userpassword> \n" +
-				"        </sourcedatabase>                         \n" +
-				"                                                  \n" +
-				"        <compareddatabase>                        \n" +
-				"            <host>localhost</host>                \n" +
-				"            <port>1521</port>                     \n" +
-				"            <name>ora11</name>                    \n" +
-				"            <username>scott</username>            \n" +
-				"            <userpassword>password</userpassword> \n" +
-				"        </compareddatabase>                       \n" +
-				"                                                  \n" +
-				"    </databases>                                  \n" +
-				"    <tables>                                      \n" +
-				"        <table>CONFIGURACJA</table>               \n" +
-				"        <table>RECONFIGURACJA</table>             \n" +
-				"    </tables>                                     \n" +
-				"    <logging file=\"log4j.xml\" />                \n" +
-				"</keydatacomparer>                                \n";
-		FileWriter fileWritter = new FileWriter(testFile.getName());
-        BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-        bufferWritter.write(zawartosc);
-        bufferWritter.close();
-        fileWritter.close();
+		testFile = DaneTestowe.tworzPlikTestowyXML();
 	}
 	
 	@AfterClass
@@ -83,7 +49,7 @@ public class ObsluzPlikiTest {
 	public void testObsluzPliki() {
 		logg.info("Test obsługi plików");
 		try {
-			ObsluzPliki obsPlk = new ObsluzPliki(nazwaPliku);
+			ObsluzPliki obsPlk = new ObsluzPliki(testFile.getName());
 			Assert.assertEquals(tabele, obsPlk.getNazwyTabel());
 			Assert.assertEquals(1521, obsPlk.getCompportnumber());
 			Assert.assertEquals("scott", obsPlk.getCompusername());
