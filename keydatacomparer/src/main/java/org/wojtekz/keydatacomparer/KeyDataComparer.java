@@ -86,7 +86,7 @@ public class KeyDataComparer {
                     logg.trace("Mamy popr. połączenie por" + bporowConn.isValid(11));
                 }
                 Porownywacz por = new Porownywacz(zapisywacz);
-                por.porownuj(bazaWzorcowa, bazaPorownywana, obspli);
+                por.porownuj(bazaWzorcowa, bazaPorownywana, obspli.getNazwyTabel());
                 
                 zapisywacz.write("======================================================\n");
                 zapisywacz.write("**** KONIEC PORÓWNANIA ****\n");

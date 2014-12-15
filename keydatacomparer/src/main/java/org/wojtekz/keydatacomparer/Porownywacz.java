@@ -51,6 +51,11 @@ public class Porownywacz {
     private FileWriter zapisywacz;
     private Tabela tabela;
 
+    /**
+     * Constructor - writes final report.
+     * @param writer something must write
+     * @throws IOException
+     */
     public Porownywacz(FileWriter writer) throws IOException {
         zapisywacz = writer;
     }
@@ -60,20 +65,17 @@ public class Porownywacz {
      *
      * @param wzorzec source database
      * @param kopia compared database
-     * @param obspli the program input parameters
+     * @param nazwyTabel names of compared tables
      * @throws IOException
+     *
      */
-    public void porownuj(BazaDanych wzorzec,
-            BazaDanych kopia,
-            ObsluzPliki obspli)
+    public void porownuj(BazaDanych wzorzec, BazaDanych kopia, ArrayList<String> nazwyTabel)
             throws IOException, SQLException {
     	
-    	//  TODO !!! - usunąc parametry wzorzec i kopia - one są brane z obspli!!!
-
-        for (int nrTabeli = 0; nrTabeli < obspli.getNazwyTabel().size(); nrTabeli++) {
+        for (int nrTabeli = 0; nrTabeli < nazwyTabel.size(); nrTabeli++) {
 
             zapisywacz.write("---------------------------------------------\n");
-            Tabela nowaTabela = new Tabela(obspli.getNazwyTabel().get(nrTabeli));
+            Tabela nowaTabela = new Tabela(nazwyTabel.get(nrTabeli));
             // tabela = wzorzec.addDatabaseTable(obspli.getNazwyTabel().get(nrTabeli));
             tabela = nowaTabela;
             wzorzec.addPrimaryKey(tabela);
