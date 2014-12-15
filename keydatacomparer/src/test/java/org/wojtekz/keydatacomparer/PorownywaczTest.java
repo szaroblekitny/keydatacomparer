@@ -2,6 +2,7 @@ package org.wojtekz.keydatacomparer;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -19,8 +20,7 @@ public class PorownywaczTest {
 	private static File confFile;
 	private BazaDanych wzorzec;
 	private BazaDanych kopia;
-	private ObsluzPliki obspli;
-	
+	private ArrayList<String> tabelki;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -38,7 +38,8 @@ public class PorownywaczTest {
 	public void setUp() throws Exception {
 		wzorzec = new OracleDB("aaa", "localhost", 1521, "scott", "password");
 		kopia = new OracleDB("aaa", "localhost", 1521, "hr", "password");
-		obspli = new ObsluzPliki(confFile.getName());
+		tabelki = new ArrayList<String>();
+		tabelki.add("Tab1");
 	}
 
 	@After
@@ -51,7 +52,7 @@ public class PorownywaczTest {
 		logg.info("Compare test starts");
 		try {
 			Porownywacz comparer = new Porownywacz(writer);
-			// TODO comparer.porownuj(wzorzec, kopia, obspli);
+			// TODO comparer.porownuj(wzorzec, kopia, tabelki);
 		} catch (Exception ee) {
 			logg.error("Porównanie zawiodło: ", ee);
 			Assert.fail();
