@@ -18,7 +18,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -70,7 +69,7 @@ public class Porownywacz {
      * @throws IOException
      *
      */
-    public void porownuj(BazaDanych wzorzec, BazaDanych kopia, ArrayList<String> nazwyTabel)
+    public void porownuj(BazaDanych wzorzec, BazaDanych kopia, List<String> nazwyTabel)
             throws IOException, SQLException {
     	
         for (int nrTabeli = 0; nrTabeli < nazwyTabel.size(); nrTabeli++) {
