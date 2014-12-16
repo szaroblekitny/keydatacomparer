@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.wojtekz.utils.DaneTestowe;
 
 public class PorownywaczTest {
-	private final static Logger logg = Logger.getLogger(PorownywaczTest.class.getName());
+	private final static Logger LOGG = Logger.getLogger(PorownywaczTest.class.getName());
 	private static FileWriter writer;
 	private static File confFile;
 	private BazaDanych wzorzec;
@@ -49,12 +49,12 @@ public class PorownywaczTest {
 
 	@Test
 	public void testPorownuj() {
-		logg.info("Compare test starts");
+		LOGG.info("Compare test starts");
 		try {
 			Porownywacz comparer = new Porownywacz(writer);
 			comparer.porownuj(wzorzec, kopia, tabelki);
 		} catch (Exception ee) {
-			logg.error("Porównanie zawiodło: ", ee);
+			LOGG.error("Porównanie zawiodło: ", ee);
 			Assert.fail();
 		}
 		
