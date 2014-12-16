@@ -121,6 +121,17 @@ public class Klucz implements Comparable<Klucz> {
     	return true;
     }
     
+    @Override
+    public int hashCode() {
+    	int hashCode = 0;
+    	
+    	for (String str : this.getLista()) {
+    		hashCode += str.hashCode();
+    	}
+    	
+    	return hashCode;
+    }
+    
 
     /**
      * @return the ArrayList list
