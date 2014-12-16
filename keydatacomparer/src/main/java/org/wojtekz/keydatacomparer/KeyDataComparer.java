@@ -57,8 +57,8 @@ public class KeyDataComparer {
         LOGG.info("Key data comparer starts");
 
         if (args.length != 1 && args.length != 2) {
-            LOGG.fatal("Argumentem jest nazwa pliku z tabelami do porównania");
-            throw new RuntimeException();
+            LOGG.fatal("Argumentem jest nazwa pliku z tabelami do porównania i opcjonalnie nazwa pliku z raportem");
+            throw new RuntimeException("Podaj argument[y]");
         }
         
         if (args.length == 2) {
