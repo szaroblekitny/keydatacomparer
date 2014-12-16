@@ -13,9 +13,12 @@ package org.wojtekz.keydatacomparer;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import oracle.jdbc.pool.OracleDataSource;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -25,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class OracleDB extends BazaDanych {
 
-    private static Logger logg = Logger.getLogger(OracleDB.class.getName());
+    private static Logger LOGG = Logger.getLogger(OracleDB.class.getName());
 
     public OracleDB(String nazwaBazy,
             String nazwaHosta,
@@ -34,11 +37,11 @@ public class OracleDB extends BazaDanych {
             String haslo) {
         super(nazwaBazy, nazwaHosta, numerPortu, schemat, haslo);
 
-        logg.info("database " + database);
-        logg.info("hostname " + hostname);
-        logg.info("portnumber " + portnumber);
-        logg.info("username " + username);
-        logg.info("userpassword " + userpassword);
+        LOGG.info("database " + database);
+        LOGG.info("hostname " + hostname);
+        LOGG.info("portnumber " + portnumber);
+        LOGG.info("username " + username);
+        LOGG.info("userpassword " + userpassword);
     }
 
     @Override
@@ -46,23 +49,23 @@ public class OracleDB extends BazaDanych {
         // "jdbc:oracle:thin:hr/password@localhost:1521:wzdata"
         this.connectUrl = "jdbc:oracle:thin:" + this.username + "/" + this.userpassword
                 + "@" + this.hostname + ":" + this.portnumber + ":" + this.database;
-        if (logg.isDebugEnabled()) {
-        	logg.debug("URL: " + connectUrl);
+        if (LOGG.isDebugEnabled()) {
+        	LOGG.debug("URL: " + connectUrl);
         }
 
         OracleDataSource ods = new OracleDataSource();
         ods.setURL(this.connectUrl);
         dbconnection = ods.getConnection();
 
-        logg.info("Mamy połączenie " + this.database);
+        LOGG.info("Mamy połączenie " + this.database);
 
         return getDbconnection();
     }
 
     @Override
     public void addPrimaryKey(Tabela tabelka) {
-    	if (logg.isDebugEnabled()) {
-    		logg.debug("addDatabaseTable: " + tabelka.getNazwaTabeli());
+    	if (LOGG.isDebugEnabled()) {
+    		LOGG.debug("addDatabaseTable: " + tabelka.getNazwaTabeli());
     	}
         ArrayList<String> kluGlu = new ArrayList<>();  // klucz główny
         PreparedStatement prepState;
@@ -78,8 +81,8 @@ public class OracleDB extends BazaDanych {
                     + "and acc.owner = alc.owner "
                     + "and acc.constraint_name = alc.constraint_name "
                     + "order by acc.position";
-            if (logg.isDebugEnabled()) {
-            	logg.debug("SQL:" + sqlStatement);
+            if (LOGG.isDebugEnabled()) {
+            	LOGG.debug("SQL:" + sqlStatement);
             }
             prepState = getDbconnection().prepareStatement(sqlStatement);
             result = prepState.executeQuery();
@@ -88,17 +91,17 @@ public class OracleDB extends BazaDanych {
                 poleKlucza = result.getString(1);
                 if (poleKlucza != null) {
                     if (kluGlu.add(poleKlucza)) {
-                    	if (logg.isDebugEnabled()) {
-                    		logg.debug("Do klucza dodaję pole " + poleKlucza);
+                    	if (LOGG.isDebugEnabled()) {
+                    		LOGG.debug("Do klucza dodaję pole " + poleKlucza);
                     	}
                     } else {
-                        logg.warn("Dodanie klucza nieudane");
+                        LOGG.warn("Dodanie klucza nieudane");
                     }
                 }
             }
 
         } catch (SQLException ex) {
-            logg.error("Błąd SQL: " + ex.getMessage());
+            LOGG.error("Błąd SQL: " + ex.getMessage());
         }
 
         tabelka.setKluczGlowny(kluGlu);
@@ -138,7 +141,7 @@ public class OracleDB extends BazaDanych {
                     + "and col.TABLE_NAME = '" + tabelka.getNazwaTabeli().toUpperCase() + "' "
                     + "order by col.column_id";
 
-            logg.debug(sqlStatement);
+            LOGG.debug(sqlStatement);
             prepState = getDbconnection().prepareStatement(sqlStatement);
             result = prepState.executeQuery();
 
@@ -152,7 +155,7 @@ public class OracleDB extends BazaDanych {
             }
 
         } catch (SQLException ex) {
-            logg.error("Błąd SQL: " + ex.getMessage());
+            LOGG.error("Błąd SQL: " + ex.getMessage());
         }
     }
 
@@ -175,7 +178,7 @@ public class OracleDB extends BazaDanych {
         String daneRekordu;
         int ileRekordow = 0;
 
-        ArrayList<String> kluczyk = tabelka.getKluczGlowny();
+        List<String> kluczyk = tabelka.getKluczGlowny();
 
         try {
             
@@ -186,11 +189,11 @@ public class OracleDB extends BazaDanych {
             try {
             	result = prepState.executeQuery();
             	if(!result.next()) {
-            		logg.error("Nie można policzyć");
+            		LOGG.error("Nie można policzyć");
             	}
             	ileRekordow = result.getInt(1);
-            	if (logg.isDebugEnabled()) {
-            		logg.debug("Liczba rekordów (" + getSchemaAndDatabaseName() + "/"
+            	if (LOGG.isDebugEnabled()) {
+            		LOGG.debug("Liczba rekordów (" + getSchemaAndDatabaseName() + "/"
             			+ tabelka.getNazwaTabeli() +"): " + ileRekordow);
             	}
             	result.close();
@@ -218,8 +221,8 @@ public class OracleDB extends BazaDanych {
 				// ucinamy końcowy przecinek
 				sqlStatement = sqlStatement.substring(0,
 						sqlStatement.length() - 2);
-				if (logg.isDebugEnabled()) {
-					logg.debug(sqlStatement);
+				if (LOGG.isDebugEnabled()) {
+					LOGG.debug(sqlStatement);
 				}
 				prepState = getDbconnection().prepareStatement(sqlStatement);
 				result = prepState.executeQuery();
@@ -232,23 +235,23 @@ public class OracleDB extends BazaDanych {
 						rekord.add(danePola);
 						daneRekordu += danePola + " ";
 					}
-					if (logg.isTraceEnabled()) {
-						logg.trace("Rec: " + daneRekordu);
+					if (LOGG.isTraceEnabled()) {
+						LOGG.trace("Rec: " + daneRekordu);
 					}
 
-					if (!daneKluczy.add(new Klucz(rekord)) && logg.isDebugEnabled()) {
-						logg.debug("Nieudaczne dodanie");
+					if (!daneKluczy.add(new Klucz(rekord)) && LOGG.isDebugEnabled()) {
+						LOGG.debug("Nieudaczne dodanie");
 					}
 					rekord.clear();
 				} // while (result.next())
 				
-				if (logg.isDebugEnabled()) {
-					logg.debug("Ile w kluczach: " + daneKluczy.size());
+				if (LOGG.isDebugEnabled()) {
+					LOGG.debug("Ile w kluczach: " + daneKluczy.size());
 				}
 			}
 
         } catch (SQLException ex) {
-            logg.error("Błąd SQL (daneKluczowe): " + ex.getMessage());
+            LOGG.error("Błąd SQL (daneKluczowe): " + ex.getMessage());
         }
 
         return daneKluczy;
