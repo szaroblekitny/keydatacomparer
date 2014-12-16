@@ -18,7 +18,7 @@ import org.wojtekz.utils.SprawdzPlikXML;
 import org.xml.sax.SAXException;
 
 public class ObsluzPlikiTest {
-	private final static Logger logg = Logger.getLogger(ObsluzPlikiTest.class.getName());
+	private final static Logger LOGG = Logger.getLogger(ObsluzPlikiTest.class.getName());
 	
 	private static File testFile;
 	
@@ -47,14 +47,14 @@ public class ObsluzPlikiTest {
 
 	@Test
 	public void testObsluzPliki() {
-		logg.info("Test obsługi plików");
+		LOGG.info("Test obsługi plików");
 		try {
 			ObsluzPliki obsPlk = new ObsluzPliki(testFile.getName());
 			Assert.assertEquals(tabele, obsPlk.getNazwyTabel());
 			Assert.assertEquals(1521, obsPlk.getCompportnumber());
 			Assert.assertEquals("scott", obsPlk.getCompusername());
 		} catch (IOException | SAXException | ParserConfigurationException ee) {
-			logg.error("Sprawdzenie nieudane", ee);
+			LOGG.error("Sprawdzenie nieudane", ee);
 			Assert.fail();
 		}
 		
@@ -62,12 +62,12 @@ public class ObsluzPlikiTest {
 	
 	@Test
 	public void testFormalnyPliku() {
-		logg.info("Sprawdzenie poprawności formalnej");
+		LOGG.info("Sprawdzenie poprawności formalnej");
 		File plikXSD = new File("xsd/keydatacomparer.xsd");
 		try {
 			SprawdzPlikXML.sprawdzFormalnie(plikXSD, testFile);
 		} catch (IOException | ParserConfigurationException | SAXException ee) {
-			logg.error("Sprawdzenie nieudane", ee);
+			LOGG.error("Sprawdzenie nieudane", ee);
 			Assert.fail();
 		}
 		
