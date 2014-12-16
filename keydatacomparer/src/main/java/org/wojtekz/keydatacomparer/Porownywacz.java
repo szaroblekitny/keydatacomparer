@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -43,7 +44,7 @@ import org.apache.log4j.Logger;
  */
 public class Porownywacz {
 
-    private final static Logger logg = Logger.getLogger(Porownywacz.class.getName());
+    private final static Logger LOGG = Logger.getLogger(Porownywacz.class.getName());
     private Set<Klucz> daneKluczyWzorcowych;
     private Set<Klucz> daneKluczyPorownywanych;
     private Set<Klucz> roznicaWzorca = new HashSet<>();
@@ -80,9 +81,9 @@ public class Porownywacz {
             tabela = nowaTabela;
             wzorzec.addPrimaryKey(tabela);
             
-            if (logg.isDebugEnabled()) {
-                logg.debug("Klucz główny dla " + tabela.getNazwaTabeli());
-                logg.debug(tabela.getKluczGlowny().toString());
+            if (LOGG.isDebugEnabled()) {
+                LOGG.debug("Klucz główny dla " + tabela.getNazwaTabeli());
+                LOGG.debug(tabela.getKluczGlowny().toString());
             }
 
             zapisywacz.write("Porównanie dla tabeli " + tabela.getNazwaTabeli() + "\n");
@@ -92,11 +93,11 @@ public class Porownywacz {
             // wzorcowej.
             wzorzec.getFields(tabela);
 
-            ArrayList<KolumnaTabeli> polaTabeli = tabela.getPolaTabeli();
+            List<KolumnaTabeli> polaTabeli = tabela.getPolaTabeli();
 
-            if (logg.isDebugEnabled()) {
+            if (LOGG.isDebugEnabled()) {
                 for (int ii = 0; ii < polaTabeli.size(); ii++) {
-                    logg.debug("Pola tabeli " + tabela.getNazwaTabeli() + ": "
+                    LOGG.debug("Pola tabeli " + tabela.getNazwaTabeli() + ": "
                             + polaTabeli.get(ii).getNazwaKolumnny()
                             + " " + polaTabeli.get(ii).getTypDanych()
                             + " " + polaTabeli.get(ii).getPrecyzja()
@@ -127,36 +128,36 @@ public class Porownywacz {
             daneKluczyWzorcowych = wzorzec.daneKluczowe(tabela);
             
             if (daneKluczyWzorcowych != null) {
-            	if (logg.isDebugEnabled()) {
+            	if (LOGG.isDebugEnabled()) {
             		wyswietlDebugKluczy((SortedSet<Klucz>) daneKluczyWzorcowych);
             	}
             } else {
-                logg.warn("Brak danych z kluczy głównych dla "
+                LOGG.warn("Brak danych z kluczy głównych dla "
                            + wzorzec.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
             daneKluczyPorownywanych = kopia.daneKluczowe(tabela);
             
            	if (daneKluczyPorownywanych != null) {
-           		if (logg.isDebugEnabled()) {
+           		if (LOGG.isDebugEnabled()) {
            			wyswietlDebugKluczy((SortedSet<Klucz>) daneKluczyPorownywanych);
            		}
            	}
            	else {
-           		logg.warn("Brak danych z kluczy głównych dla "
+           		LOGG.warn("Brak danych z kluczy głównych dla "
                        + kopia.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
-            logg.debug("Różnica wzorca");
+            LOGG.debug("Różnica wzorca");
             // metoda addAll zwraca true, jeśli dodawana kolekcja zmienia wielkość zbioru
             // i daje sumę zbiorów
             // metoda removeAll daje niesymetryczną różnicę zbiorów i zwraca true, jeśli operacja
             // zmienia wielkość zbioru
             roznicaWzorca.addAll(daneKluczyWzorcowych);
             if (!roznicaWzorca.addAll(daneKluczyPorownywanych)) {
-                logg.debug("brak różnic w danych kluczy");
+                LOGG.debug("brak różnic w danych kluczy");
             } else {
-                logg.debug("Dodanie udane");
+                LOGG.debug("Dodanie udane");
                 pokazRoznice((SortedSet<Klucz>) daneKluczyWzorcowych, (SortedSet<Klucz>) daneKluczyPorownywanych,
                         "Rekordy, które są we wzorcu, a nie ma w porównaniu");
                 pokazRoznice((SortedSet<Klucz>) daneKluczyPorownywanych, (SortedSet<Klucz>) daneKluczyWzorcowych,
@@ -164,7 +165,7 @@ public class Porownywacz {
             }
 
 			if (daneKluczyWzorcowych != null && daneKluczyPorownywanych != null) {
-				logg.debug("Część wspólna");
+				LOGG.debug("Część wspólna");
 				wspolneRekordy = new TreeSet<>();
 				/*
 				 *  Najpierw tworzymy zbiór wszystkich rekordów. Potem stosujemy metodę retainAll,
@@ -172,22 +173,22 @@ public class Porownywacz {
 				 *  zbiorach.
 				 */
 				if (!wspolneRekordy.addAll(daneKluczyWzorcowych) && !wspolneRekordy.addAll(daneKluczyPorownywanych)) {
-					logg.debug("pusto w danych kluczy");
+					LOGG.debug("pusto w danych kluczy");
 				} else {
 					if (wspolneRekordy.retainAll(daneKluczyPorownywanych)
 							|| wspolneRekordy.retainAll(daneKluczyWzorcowych)) {
-						if (logg.isDebugEnabled()) {
-							logg.debug("empty: " + wspolneRekordy.isEmpty());  
+						if (LOGG.isDebugEnabled()) {
+							LOGG.debug("empty: " + wspolneRekordy.isEmpty());  
 						}
 						pokazRozneRekordy((SortedSet<Klucz>)wspolneRekordy,
 								wzorzec.getDbconnection(),
 								kopia.getDbconnection());
 					} else {
-						logg.debug("retain nic nie zmienia");
+						LOGG.debug("retain nic nie zmienia");
 					}
 				}
 			} else {
-				logg.error("BRAK KLUCZOWYCH DANYCH");
+				LOGG.error("BRAK KLUCZOWYCH DANYCH");
 			}
 
         }
@@ -198,20 +199,20 @@ public class Porownywacz {
     private void wyswietlDebugKluczy(SortedSet<Klucz> klucze) {
 		if (klucze != null) {
 			String str = "";
-			if (logg.isDebugEnabled()) {
-				logg.debug("Dane kluczy porow: " + klucze.size());
+			if (LOGG.isDebugEnabled()) {
+				LOGG.debug("Dane kluczy porow: " + klucze.size());
 			}
 			for (Klucz iterator : klucze) {
 				for (int ii = 0; ii < iterator.getDlugosc(); ii++) {
 					str += iterator.getLista().get(ii) + " ";
 				}
-				if (logg.isTraceEnabled()) {
-					logg.trace(str);
+				if (LOGG.isTraceEnabled()) {
+					LOGG.trace(str);
 				}
 				str = "";
 			}
 		} else {
-			logg.warn("Klucze puste!");
+			LOGG.warn("Klucze puste!");
 		}
     }
 
@@ -220,14 +221,14 @@ public class Porownywacz {
             throws IOException {
         String wypRozn = "";
 
-        logg.debug("pokazRoznice");
+        LOGG.debug("pokazRoznice");
         wyswietlDebugKluczy(co);
         wyswietlDebugKluczy(doCzego);
         
         co.removeAll(doCzego);
         if (!co.isEmpty()) {  // są rekordy w różnicy
-        	if (logg.isDebugEnabled()) {
-        		logg.debug("Komunikat: " + komunikat);
+        	if (LOGG.isDebugEnabled()) {
+        		LOGG.debug("Komunikat: " + komunikat);
         	}
             zapisywacz.write("\n" + komunikat + ":\n");
             for (Iterator<Klucz> it = co.iterator(); it.hasNext();) {
@@ -258,8 +259,8 @@ public class Porownywacz {
         for (Klucz iter : wspolne) {
             sqlStatement = BazaDanych.tworzenieSelecta(tabela, iter);
             
-            if (logg.isTraceEnabled()) {
-                logg.trace("sqlStatement: " + sqlStatement);
+            if (LOGG.isTraceEnabled()) {
+                LOGG.trace("sqlStatement: " + sqlStatement);
             }
             
             prepStWzor = wzorzecConn.prepareStatement(sqlStatement);
@@ -311,8 +312,8 @@ public class Porownywacz {
 
         for (int ii = 1; ii <= tabela.getPolaTabeli().size(); ii++) {
             ileZnakow = tabela.getPolaTabeli().get(ii - 1).getSzerokosc();
-            if (logg.isTraceEnabled()) {
-            	logg.trace("znaki: " + ileZnakow);
+            if (LOGG.isTraceEnabled()) {
+            	LOGG.trace("znaki: " + ileZnakow);
             }
             pole = result.getString(ii);
             if (pole == null) {
@@ -321,8 +322,8 @@ public class Porownywacz {
 
             // jeśli typ danych zawiera CHAR, to formatuj na lewo
             typPola = tabela.getPolaTabeli().get(ii - 1).getTypDanych();
-            if (logg.isTraceEnabled()) {
-            	logg.trace("Typ pola: " + typPola);
+            if (LOGG.isTraceEnabled()) {
+            	LOGG.trace("Typ pola: " + typPola);
             }
             if (typPola.indexOf("CHAR") > 0) {
                 pole = padRight(pole, ileZnakow);
@@ -334,8 +335,8 @@ public class Porownywacz {
 
         linia = linia.substring(0, linia.length() - 1);
         linia = linia.trim();
-        if (logg.isTraceEnabled()) {
-        	logg.trace("linia: " + linia);
+        if (LOGG.isTraceEnabled()) {
+        	LOGG.trace("linia: " + linia);
         }
         zapisywacz.write(linia + "\n");
     }
