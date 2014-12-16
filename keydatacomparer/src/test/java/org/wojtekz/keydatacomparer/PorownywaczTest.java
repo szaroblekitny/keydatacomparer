@@ -52,7 +52,7 @@ public class PorownywaczTest {
 		logg.info("Compare test starts");
 		try {
 			Porownywacz comparer = new Porownywacz(writer);
-			// TODO comparer.porownuj(wzorzec, kopia, tabelki);
+			comparer.porownuj(wzorzec, kopia, tabelki);
 		} catch (Exception ee) {
 			logg.error("Porównanie zawiodło: ", ee);
 			Assert.fail();
