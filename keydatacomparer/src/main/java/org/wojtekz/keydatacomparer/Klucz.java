@@ -12,6 +12,8 @@
 package org.wojtekz.keydatacomparer;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -20,8 +22,8 @@ import org.apache.log4j.Logger;
  * @author Wojciech Zaręba
  */
 public class Klucz implements Comparable<Klucz> {
-    private final static Logger logg = Logger.getLogger(Klucz.class.getName());
-    private ArrayList<String> lista = new ArrayList<>();
+    private final static Logger LOGG = Logger.getLogger(Klucz.class.getName());
+    private List<String> lista = new ArrayList<>();
     private int dlugosc;
     
     /**
@@ -32,9 +34,9 @@ public class Klucz implements Comparable<Klucz> {
     public Klucz(ArrayList<String> listka) {
         this.lista.addAll(listka);
         this.dlugosc = this.lista.size();
-        if (logg.isTraceEnabled()) {
+        if (LOGG.isTraceEnabled()) {
             for (int ii = 0; ii < this.dlugosc; ii++) {
-                logg.trace("ii: " + ii + "->" + this.lista.get(ii));
+                LOGG.trace("ii: " + ii + "->" + this.lista.get(ii));
             }
         }
     }
@@ -51,37 +53,37 @@ public class Klucz implements Comparable<Klucz> {
     public int compareTo(Klucz innaLista) {
         int wynikPorownania = 0;
         // int wielkoscListy = lista.size();
-        ArrayList<String> innyArray = innaLista.getLista();
+        List<String> innyArray = innaLista.getLista();
         StringBuilder lancuchListy = new StringBuilder();
         StringBuilder lancuchInnejListy = new StringBuilder();
         String lancuszek;
         
-        if (logg.isTraceEnabled()) {
-            logg.trace("wielkoscListy: " + this.getDlugosc());
+        if (LOGG.isTraceEnabled()) {
+            LOGG.trace("wielkoscListy: " + this.getDlugosc());
         }
         
         for (int ii = 0; ii < this.getDlugosc(); ii++) {
             lancuszek = this.lista.get(ii) + "$%^";
-            if (logg.isTraceEnabled()) {
-            	logg.trace("ii " + ii + ": " + lancuszek);
+            if (LOGG.isTraceEnabled()) {
+            	LOGG.trace("ii " + ii + ": " + lancuszek);
             }
             lancuchListy.append(lancuszek);
         }
         
-        if (logg.isTraceEnabled()) {
-        	logg.trace("lancuchListy: " + lancuchListy.toString());
+        if (LOGG.isTraceEnabled()) {
+        	LOGG.trace("lancuchListy: " + lancuchListy.toString());
         }
         
         for (int jj = 0; jj < innyArray.size(); jj++) {
             lancuszek = innyArray.get(jj) + "$%^";
-            if (logg.isTraceEnabled()) {
-                logg.trace("jj " + jj + ": " + lancuszek);
+            if (LOGG.isTraceEnabled()) {
+                LOGG.trace("jj " + jj + ": " + lancuszek);
             }
             lancuchInnejListy.append(lancuszek);
         }
         
-        if (logg.isTraceEnabled()) {
-        	logg.trace("lancuchInnejListy: " + lancuchInnejListy.toString());
+        if (LOGG.isTraceEnabled()) {
+        	LOGG.trace("lancuchInnejListy: " + lancuchInnejListy.toString());
         }
         
         if ("".equals(lancuchListy.toString()) || "".equals(lancuchInnejListy.toString())) {
@@ -91,17 +93,39 @@ public class Klucz implements Comparable<Klucz> {
             wynikPorownania = lancuchListy.toString().compareTo(lancuchInnejListy.toString());
         }
         
-        if (logg.isTraceEnabled()) {
-        	logg.trace("wynikPorownania: " + wynikPorownania);
+        if (LOGG.isTraceEnabled()) {
+        	LOGG.trace("wynikPorownania: " + wynikPorownania);
         }
         
         return wynikPorownania;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+    	LOGG.trace("Klucz equals starts");
+    	if (obj instanceof Klucz) {
+    		if (this.getLista().size() != ((Klucz)obj).getLista().size()) {
+    			return false;
+    		}
+    		
+    		for (int ii = 0; ii < this.getLista().size(); ii++) {
+    			if (!((Klucz)obj).getLista().get(ii).equals(this.getLista().get(ii))) {
+    				return false;
+    			}
+    		}
+    	} else {
+    		return false;
+    	}
+    	
+    	LOGG.trace("Klucz equals fine equal");
+    	return true;
+    }
+    
 
     /**
      * @return the ArrayList list
      */
-    public ArrayList<String> getLista() {
+    public List<String> getLista() {
         return lista;
     }
 
