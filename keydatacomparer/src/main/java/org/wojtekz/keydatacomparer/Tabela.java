@@ -12,6 +12,8 @@
 package org.wojtekz.keydatacomparer;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -23,12 +25,12 @@ import org.apache.log4j.Logger;
  */
 public class Tabela {
 
-    private final static Logger logg = Logger.getLogger(Tabela.class.getName());
+    private final static Logger LOGG = Logger.getLogger(Tabela.class.getName());
 
     // Properties of class Tabela
     private String nazwaTabeli;
-    private ArrayList<String> kluczGlowny = new ArrayList<>();
-    private ArrayList<KolumnaTabeli> polaTabeli = new ArrayList<>();
+    private List<String> kluczGlowny = new ArrayList<>();
+    private List<KolumnaTabeli> polaTabeli = new ArrayList<>();
 
     
     /**
@@ -36,8 +38,8 @@ public class Tabela {
      * @param nazwa
      */
     public Tabela(String nazwa) {
-    	if (logg.isDebugEnabled()) {
-    		logg.debug("Nowa pusta tabela " + nazwa);
+    	if (LOGG.isDebugEnabled()) {
+    		LOGG.debug("Nowa pusta tabela " + nazwa);
     	}
         this.nazwaTabeli = nazwa;
     }
@@ -65,8 +67,8 @@ public class Tabela {
         kolumnaTabeli.setNazwaKolumnny(kolumna);
         kolumnaTabeli.setTypDanych(typ);
         boolean add = polaTabeli.add(kolumnaTabeli);
-        if (logg.isTraceEnabled()) {
-        	logg.trace("Dodałem kolumnę " + kolumna + " - " + add);
+        if (LOGG.isTraceEnabled()) {
+        	LOGG.trace("Dodałem kolumnę " + kolumna + " - " + add);
         }
     }
     
@@ -92,12 +94,12 @@ public class Tabela {
         kolumnaTabeli.setSkala(skala);
         kolumnaTabeli.setSzerokosc(szerokosc);
         if (polaTabeli.add(kolumnaTabeli)) {
-            if (logg.isTraceEnabled()) {
-                logg.trace("Dodałem kolumnę " + kolumna);
+            if (LOGG.isTraceEnabled()) {
+                LOGG.trace("Dodałem kolumnę " + kolumna);
             }
         } else {
-        	if (logg.isDebugEnabled()) {
-        		logg.debug("Dodanie kolumny " + kolumna + " nieudane");
+        	if (LOGG.isDebugEnabled()) {
+        		LOGG.debug("Dodanie kolumny " + kolumna + " nieudane");
         	}
         }
     }
@@ -120,14 +122,14 @@ public class Tabela {
     /**
      * @return the kluczGlowny
      */
-    public ArrayList<String> getKluczGlowny() {
+    public List<String> getKluczGlowny() {
         return kluczGlowny;
     }
 
     /**
      * @return the polaTabeli
      */
-    public ArrayList<KolumnaTabeli> getPolaTabeli() {
+    public List<KolumnaTabeli> getPolaTabeli() {
         return polaTabeli;
     }
 
