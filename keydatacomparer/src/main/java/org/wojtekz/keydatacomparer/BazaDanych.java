@@ -110,7 +110,8 @@ public abstract class BazaDanych {
             sqlStatement.append(tabela.getPolaTabeli().get(ii).getNazwaKolumnny()).append(", ");
         }
         // ucinamy końcowy przecinek
-        sqlStatement.substring(0, sqlStatement.toString().length() - 2);
+        String poUcPrzec = sqlStatement.substring(0, sqlStatement.toString().length() - 2);
+        sqlStatement = new StringBuilder(poUcPrzec);
         sqlStatement.append(" from ").append(tabela.getNazwaTabeli()).append(" where ");
 
         for (int jj = 0; jj < tabela.getKluczGlowny().size(); jj++) {
@@ -118,16 +119,16 @@ public abstract class BazaDanych {
                     .append(klucz.getLista().get(jj)).append("' and ");
         }
         // ucinamy końcowy and 
-        sqlStatement.substring(0, sqlStatement.toString().length() - 5);
-
+        String poUcAnd = sqlStatement.substring(0, sqlStatement.toString().length() - 5);
+        sqlStatement = new StringBuilder(poUcAnd);
         sqlStatement.append(" order by ");
         for (int kk = 0; kk < tabela.getKluczGlowny().size(); kk++) {
             sqlStatement.append(tabela.getKluczGlowny().get(kk)).append(", ");
         }
         // ucinamy końcowy przecinek
-        sqlStatement.substring(0, sqlStatement.toString().length() - 2);
+        String finalSQL = sqlStatement.substring(0, sqlStatement.toString().length() - 2);
 
-        return sqlStatement.toString();
+        return finalSQL;
     }
 
     /**
