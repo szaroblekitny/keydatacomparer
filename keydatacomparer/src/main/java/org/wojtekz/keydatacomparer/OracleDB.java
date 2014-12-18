@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class OracleDB extends BazaDanych {
 
-    private static Logger LOGG = Logger.getLogger(OracleDB.class.getName());
+    private final static Logger LOGG = Logger.getLogger(OracleDB.class.getName());
 
     public OracleDB(String nazwaBazy,
             String nazwaHosta,
@@ -67,7 +67,7 @@ public class OracleDB extends BazaDanych {
     	if (LOGG.isDebugEnabled()) {
     		LOGG.debug("addDatabaseTable: " + tabelka.getNazwaTabeli());
     	}
-        ArrayList<String> kluGlu = new ArrayList<>();  // klucz główny
+        List<String> kluGlu = new ArrayList<>();  // klucz główny
         PreparedStatement prepState;
         ResultSet result;
         String poleKlucza;
