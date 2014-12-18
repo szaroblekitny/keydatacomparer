@@ -50,7 +50,7 @@ public class Tabela {
      * @param nazwa table name
      * @param kluGlu primary key
      */
-    public Tabela(String nazwa, ArrayList<String> kluGlu) {
+    public Tabela(String nazwa, List<String> kluGlu) {
         this.nazwaTabeli = nazwa;
         this.kluczGlowny = kluGlu;
     }
@@ -106,10 +106,10 @@ public class Tabela {
     
 
     /**
-     * @param kluczGlowny the list of fields for primary key to set
+     * @param kluGlu the list of fields for primary key to set
      */
-    public void setKluczGlowny(ArrayList<String> kluczGlowny) {
-        this.kluczGlowny = kluczGlowny;
+    public void setKluczGlowny(List<String> kluGlu) {
+        this.kluczGlowny = kluGlu;
     }
     
     /**
