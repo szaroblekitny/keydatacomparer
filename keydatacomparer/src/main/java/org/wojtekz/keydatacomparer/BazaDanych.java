@@ -13,6 +13,7 @@ package org.wojtekz.keydatacomparer;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedSet;
 
 /**
@@ -37,7 +38,7 @@ public abstract class BazaDanych {
     /**
      * List of database tables to compare
      */
-    private ArrayList<Tabela> tabele = new ArrayList<>();
+    private List<Tabela> tabele = new ArrayList<>();
 
     /**
      * Default constructor. Sets database connection parameters only.
@@ -61,7 +62,7 @@ public abstract class BazaDanych {
     }
     
     /**
-     * Gives connection to the database.
+     * Gives connection to the database. Must be implemented for each database vendor.
      * 
      * @return the database connection
      * @throws java.sql.SQLException
@@ -71,23 +72,25 @@ public abstract class BazaDanych {
     
     
     /**
-     * It adds primary key array to table.
+     * It reads primary key for given table from the database and adds primary key
+     * fields as array to the tabelka object. Must be implemented for each database vendor.
      * 
      * @param tabelka the database table representation object
      */
     public abstract void addPrimaryKey(Tabela tabelka);
     
     /**
-     * Gets fields of the database table tabl. They are not in the primary
-     * key and they data is compared.
+     * Reads fields of the database table tabl and adds to the tabl object.
+     * They are <b>not</b> in the primary key and data from they is compared.
+     * Must be implemented for each database vendor.
      * 
      * @param tabl database table
      */
     public abstract void getFields(Tabela tabl);
     
     /**
-     * Creates data from primary key sorted set for table tabelka. It will be used
-     * to find missing records and compare rest of records data.
+     * Reads data from record given by primary key of table tabelka as sorted set. It will be used
+     * to compare of records data. Must be implemented for each database vendor.
      * 
      * @param tabelka database table
      * @return data for primary keys
@@ -98,8 +101,8 @@ public abstract class BazaDanych {
     /**
      * Select data from database to compare it.
      * 
-     * @param tabela
-     * @param klucz
+     * @param tabela Tabela (table) object
+     * @param klucz primary key object
      * @return SQL select for getting data to compare
      */
     public static String tworzenieSelecta(Tabela tabela, Klucz klucz) {
@@ -132,62 +135,78 @@ public abstract class BazaDanych {
     }
 
     /**
-     * @return the database
+     * Gives database name from database field.
+     * 
+     * @return the database name String
      */
     public String getDatabase() {
         return database;
     }
 
     /**
-     * @return the hostname
+     * Gives host name (or IP) from hostname field.
+     * 
+     * @return the host name
      */
     public String getHostname() {
         return hostname;
     }
 
     /**
-     * @return the username
+     * Gives user name from username field.
+     * 
+     * @return the user name
      */
     public String getUsername() {
         return username;
     }
 
     /**
-     * @return the userpassword
+     * Gives password to connect to user given by username.
+     * @return the password
      */
     public String getUserpassword() {
         return userpassword;
     }
 
     /**
-     * @return the portnumber
+     * Gives port number used to establish database connection.
+     * 
+     * @return the port number
      */
     public int getPortnumber() {
         return portnumber;
     }
 
     /**
-     * @return the connectUrl
+     * Gives connection URL used to establish database connection.
+     * 
+     * @return the connection URL
      */
     public String getConnectUrl() {
         return connectUrl;
     }
 
     /**
-     * @return the dbconnection
+     * Gives Connection object to connected database.
+     * 
+     * @return the database Connection
      */
     public Connection getDbconnection() {
         return dbconnection;
     }
 
     /**
-     * @return the ArrayList of database tables
+     * List of tables which will be compared.
+     * 
+     * @return the list of compared tables
      */
-    public ArrayList<Tabela> getTabele() {
+    public List<Tabela> getTabele() {
         return tabele;
     }
     
     /**
+     * Concatenation of database and username String in form <database>:<username>.
      * 
      * @return String with schema and database for displaing
      */
