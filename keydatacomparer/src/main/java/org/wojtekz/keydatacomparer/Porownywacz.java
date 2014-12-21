@@ -52,7 +52,8 @@ public class Porownywacz {
     private Tabela tabela;
 
     /**
-     * Constructor - writes final report.
+     * Constructor - set writer to write final report.
+     * 
      * @param writer something must write
      * @throws IOException
      */
