@@ -1,3 +1,15 @@
+/*
+ Licensed to the Simple Public License (SimPL) 2.0. You may obtain
+ a copy of the License at http://opensource.org/licenses/Simple-2.0
+
+ You get the royalty free right to use the software for any purpose;
+ make derivative works of it (this is called a "Derived Work");
+ copy and distribute it and any Derived Work.
+ You get NO WARRANTIES. None of any kind. If the software damages you
+ in any way, you may only recover direct damages up to the amount you
+ paid for it (that is zero if you did not pay anything).
+ */
+
 package org.wojtekz.utils;
 
 import java.sql.ResultSetMetaData;
@@ -6,12 +18,11 @@ import java.sql.Types;
 
 public class StringResultSetMetaData implements ResultSetMetaData {
 	
-	private String[][] resultSet = {
-			{"RowId", "GlownyID", "Imie", "Nazwisko"},
-			{"AAA", "1", "Jan", "Kowalski"},
-			{"AAB", "2", "Stanisław", "Nowak"},
-			{"AAC", "3", "Kazimiera", "Brzoza"}
-	};
+	private String[] naglowki;
+	
+	public StringResultSetMetaData(String[] ngl) {
+		naglowki = ngl;
+	}
 
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -25,7 +36,7 @@ public class StringResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public int getColumnCount() throws SQLException {
-		return StringResultSet.RESULT_SET_WIDTH;
+		return naglowki.length;
 	}
 
 	@Override
@@ -65,16 +76,16 @@ public class StringResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public String getColumnLabel(int column) throws SQLException {
-		if (column >= 1 && column <= StringResultSet.RESULT_SET_WIDTH) {
-			return resultSet[0][column];
+		if (column >= 1 && column <= naglowki.length) {
+			return naglowki[column];
 		}
 		throw new SQLException("Wrong column number");
 	}
 
 	@Override
 	public String getColumnName(int column) throws SQLException {
-		if (column >= 1 && column <= StringResultSet.RESULT_SET_WIDTH) {
-			return resultSet[0][column];
+		if (column >= 1 && column <= naglowki.length) {
+			return naglowki[column];
 		}
 		throw new SQLException("Wrong column number");
 	}

@@ -1,3 +1,15 @@
+/*
+ Licensed to the Simple Public License (SimPL) 2.0. You may obtain
+ a copy of the License at http://opensource.org/licenses/Simple-2.0
+
+ You get the royalty free right to use the software for any purpose;
+ make derivative works of it (this is called a "Derived Work");
+ copy and distribute it and any Derived Work.
+ You get NO WARRANTIES. None of any kind. If the software damages you
+ in any way, you may only recover direct damages up to the amount you
+ paid for it (that is zero if you did not pay anything).
+ */
+
 package org.wojtekz.utils;
 
 import java.io.InputStream;
@@ -23,20 +35,31 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+/**
+ * Very simple ResultSet implementation for testing.
+ * 
+ * @author Wojtek Zaręba
+ *
+ */
 public class StringResultSet implements ResultSet {
-	public static final int RESULT_SET_WIDTH = 3;
-	public static final int RESULT_SET_HEIGHT = 3;
+	private final int RESULT_SET_WIDTH;
+	private final int RESULT_SET_HEIGHT;
 	
 	private static final int FIRST_ROW = 1;
 	private static final int FIRST_COLUMN = 1;
 	
-	private String[][] resultSet = {
-			{"RowId", "GlownyID", "Imie", "Nazwisko"},
-			{"AAA", "1", "Jan", "Kowalski"},
-			{"AAB", "2", "Stanisław", "Nowak"},
-			{"AAC", "3", "Kazimiera", "Brzoza"}
-	};
+	private String[][] resultSet;
 	private int ii = FIRST_ROW;
+	
+	public StringResultSet(String[][] dane) throws SQLException {
+		String [] str = dane[0];
+		resultSet = dane;
+		RESULT_SET_WIDTH = dane.length - 1;
+		RESULT_SET_HEIGHT = str.length - 1;
+		if (RESULT_SET_WIDTH < 0 || RESULT_SET_HEIGHT < 0) {
+			throw new SQLException("Bad test data");
+		}
+	}
 
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -252,7 +275,7 @@ public class StringResultSet implements ResultSet {
 
 	@Override
 	public ResultSetMetaData getMetaData() throws SQLException {
-		ResultSetMetaData rsmd = new StringResultSetMetaData();
+		ResultSetMetaData rsmd = new StringResultSetMetaData(resultSet[0]);
 		return rsmd;
 	}
 

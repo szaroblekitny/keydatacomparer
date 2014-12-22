@@ -7,12 +7,24 @@ import java.sql.SQLException;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class StringResultSetTest {
-	private ResultSet rs = new StringResultSet();
+	private static String[][] dane = {
+			{"RowId", "GlownyID", "Imie", "Nazwisko"},
+			{"AAA", "1", "Jan", "Kowalski"},
+			{"AAB", "2", "Stanisław", "Nowak"},
+			{"AAC", "3", "Kazimiera", "Brzoza"}
+	};
+	private static ResultSet rs;
 
 
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		rs = new StringResultSet(dane);
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		rs.first();
