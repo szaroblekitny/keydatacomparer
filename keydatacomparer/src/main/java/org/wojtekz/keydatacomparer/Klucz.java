@@ -31,7 +31,7 @@ public class Klucz implements Comparable<Klucz> {
      * 
      * @param listka
      */
-    public Klucz(ArrayList<String> listka) {
+    public Klucz(List<String> listka) {
         this.lista.addAll(listka);
         this.dlugosc = this.lista.size();
         if (LOGG.isTraceEnabled()) {

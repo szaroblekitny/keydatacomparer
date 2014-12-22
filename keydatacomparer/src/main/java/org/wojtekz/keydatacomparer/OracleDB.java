@@ -173,7 +173,7 @@ public class OracleDB extends BazaDanych {
         ResultSet result;
         String sqlStatement;
         
-        ArrayList<String> rekord = new ArrayList<>();
+        List<String> rekord = new ArrayList<>();
         String danePola;
         String daneRekordu;
         int ileRekordow = 0;
