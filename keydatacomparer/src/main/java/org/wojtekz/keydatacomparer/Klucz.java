@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 /**
  * This class implements Comparable for compared data read from a database.
  * This is only for search records with the same primary key values. Comparison
- * the rest of data is done by reding data from database.
+ * the rest of data is done by reading data from database.
  * 
  * @author Wojciech Zaręba
  */
@@ -139,9 +139,9 @@ public class Klucz implements Comparable<Klucz> {
     
 
     /**
-     * Primary key fields list.
+     * Primary key fields data.
      * 
-     * @return List list
+     * @return list of fields content (String) which is unique for this key
      */
     public List<String> getLista() {
         return lista;
