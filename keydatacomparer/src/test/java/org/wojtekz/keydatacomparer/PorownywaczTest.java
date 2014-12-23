@@ -1,12 +1,14 @@
 package org.wojtekz.keydatacomparer;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,14 +34,19 @@ import org.mockito.stubbing.Answer;
 import org.wojtekz.utils.DaneTestowe;
 import org.wojtekz.utils.StringResultSet;
 
+/**
+ * The big test for class Porownywacz. This is the core of Keydatacomparer application.
+ * 
+ * @author Wojciech Zaręba
+ *
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class PorownywaczTest {
 	private final static Logger LOGG = Logger.getLogger(PorownywaczTest.class.getName());
 	
-	private static String outputFile;
+	private static File outputFile;
 	private static FileWriter writer;
 	private static File confFile;
-	private static BufferedReader reader;
 	private BazaDanych wzorzecMck = mock(BazaDanych.class);
 	private BazaDanych kopiaMck = mock(BazaDanych.class);
 	private Connection connWzorzecMck = mock(Connection.class);
@@ -47,26 +54,29 @@ public class PorownywaczTest {
 	private ArrayList<String> tabelki;
     private SortedSet<Klucz> kluczeWzorca = new TreeSet<Klucz>();
     private SortedSet<Klucz> kluczeKopii = new TreeSet<Klucz>();
-    private PreparedStatement prepStWzorMck = mock(PreparedStatement.class);
-    private ResultSet resultWzor;
-    private PreparedStatement prepStKopiaMck = mock(PreparedStatement.class);
-    private ResultSet resultKopia;
+    private PreparedStatement prepSt1WzMck = mock(PreparedStatement.class);
+    private PreparedStatement prepSt1KpMck = mock(PreparedStatement.class);
+    private PreparedStatement prepSt3WzMck = mock(PreparedStatement.class);
+    private PreparedStatement prepSt3KpMck = mock(PreparedStatement.class);
+    private ResultSet result1Wz;
+    private ResultSet result1Kp;
+    private ResultSet result3Kopia;
+    private ResultSet result3Wzor;
 	
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		LOGG.info("setUpBeforeClass fired");
-		outputFile = UUID.randomUUID().toString() + ".txt";
+		outputFile = new File(UUID.randomUUID().toString() + ".txt");
 		writer = new FileWriter(outputFile);
 		confFile = DaneTestowe.tworzPlikTestowyXML();
-		reader = Files.newBufferedReader(FileSystems.getDefault().getPath(outputFile), Charset.defaultCharset());
+		
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		confFile.delete();
-		writer.close();
-		reader.close();
+		outputFile.delete();
 	}
 
 	@Before
@@ -95,19 +105,38 @@ public class PorownywaczTest {
 		kluczeKopii.add(kl3);
 		
 		
+		@SuppressWarnings("unused")
 		String[][] daneWzorca = {
 				{"RowId", "GlownyID", "Imie", "Nazwisko"},
 				{"AAA", "1", "Jan", "Kowalski"},
 				{"AAB", "2", "Stanisław", "Nowak"},
 				{"AAC", "3", "Kazimiera", "Brzoza"}};
 		
+		@SuppressWarnings("unused")
 		String[][] daneKopii = {
 				{"RowId", "GlownyID", "Imie", "Nazwisko"},
 				{"AAA", "1", "Jan", "Kowalski"},
 				{"AAC", "3", "Kazimierz", "Brzoza"}};
 		
-		resultWzor = new StringResultSet(daneWzorca);
-		resultKopia = new StringResultSet(daneKopii);
+		/// -----------------------------------------------
+		
+		String[][] daneRes1 = {
+				{"RowId", "GlownyID", "Imie", "Nazwisko"},
+				{"AAA", "1", "Jan", "Kowalski"}
+				};
+		
+		String[][] daneRes3Wz = {
+				{"RowId", "GlownyID", "Imie", "Nazwisko"},
+				{"AAC", "3", "Kazimiera", "Brzoza"}};
+		
+		String[][] daneRes3Kop = {
+				{"RowId", "GlownyID", "Imie", "Nazwisko"},
+				{"AAC", "3", "Kazimierz", "Brzoza"}};
+		
+		result1Wz = new StringResultSet(daneRes1);
+		result1Kp = new StringResultSet(daneRes1);
+		result3Wzor = new StringResultSet(daneRes3Wz);
+		result3Kopia = new StringResultSet(daneRes3Kop);
 		
 		LOGG.info("setUp Before ended");
 	}
@@ -128,6 +157,7 @@ public class PorownywaczTest {
 		      public Tabela answer(InvocationOnMock invocation) {
 		          Object[] args = invocation.getArguments();
 		          Tabela tmpTab = (Tabela) args[0];
+		          tmpTab.dodajKolumne("GlownyID", "VARCHAR2");
 		    	  tmpTab.dodajKolumne("Imie", "VARCHAR2");
 		    	  tmpTab.dodajKolumne("Nazwisko", "VARCHAR2");
 		          return tmpTab;
@@ -174,19 +204,50 @@ public class PorownywaczTest {
 		
 		
 		try {
-			when(connWzorzecMck.prepareStatement(anyString())).thenReturn(prepStWzorMck);
-			when(connKopiaMck.prepareStatement(anyString())).thenReturn(prepStKopiaMck);
+			when(connWzorzecMck.prepareStatement("select GlownyID, Imie, Nazwisko from Tab1 where GlownyID = '1' order by GlownyID")).thenReturn(prepSt1WzMck);
+			when(connWzorzecMck.prepareStatement("select GlownyID, Imie, Nazwisko from Tab1 where GlownyID = '3' order by GlownyID")).thenReturn(prepSt3WzMck);
+			when(connKopiaMck.prepareStatement("select GlownyID, Imie, Nazwisko from Tab1 where GlownyID = '1' order by GlownyID")).thenReturn(prepSt1KpMck);
+			when(connKopiaMck.prepareStatement("select GlownyID, Imie, Nazwisko from Tab1 where GlownyID = '3' order by GlownyID")).thenReturn(prepSt3KpMck);
 			
-			when(prepStWzorMck.executeQuery()).thenReturn(resultWzor);
-			when(prepStKopiaMck.executeQuery()).thenReturn(resultKopia);
+			when(prepSt1WzMck.executeQuery()).thenReturn(result1Wz);
+			when(prepSt1KpMck.executeQuery()).thenReturn(result1Kp);
+			when(prepSt3WzMck.executeQuery()).thenReturn(result3Wzor);
+			when(prepSt3KpMck.executeQuery()).thenReturn(result3Kopia);
 			
 			// -----------------
 		
 			Porownywacz comparer = new Porownywacz(writer);
 			LOGG.info("-------- zaczynamy porównanie ----------");
 			comparer.porownuj(wzorzecMck, kopiaMck, tabelki);
+			
+			writer.close();
+			
+			BufferedReader reader = Files.newBufferedReader(outputFile.toPath(), Charset.defaultCharset());
+			
 			String wynik = reader.readLine();
-			Assert.assertEquals("============================", wynik);
+			Assert.assertEquals("---------------------------------------------", wynik);
+			wynik = reader.readLine();
+			Assert.assertEquals("Porównanie dla tabeli Tab1", wynik);
+			wynik = reader.readLine();
+			Assert.assertEquals("Pola tabeli:", wynik);
+			wynik = reader.readLine();
+			Assert.assertEquals("GlownyID|Imie|Nazwisko", wynik);
+			wynik = reader.readLine();
+			wynik = reader.readLine();
+			Assert.assertEquals("Rekordy, które są we wzorcu, a nie ma w porównaniu:", wynik);
+			wynik = reader.readLine();
+			Assert.assertEquals("2", wynik);
+			wynik = reader.readLine();
+			wynik = reader.readLine();
+			Assert.assertEquals("Różne rekordy w obu bazach", wynik);
+			wynik = reader.readLine();
+			wynik = reader.readLine();
+			Assert.assertEquals("Wzor : 3                             |Kazimiera                     |Brzoza", wynik);
+			wynik = reader.readLine();
+			Assert.assertEquals("Kopia: 3                             |Kazimierz                     |Brzoza", wynik);
+			
+			reader.close();
+			
 		} catch (Exception ee) {
 			LOGG.error("Porównanie zawiodło: ", ee);
 			Assert.fail();
