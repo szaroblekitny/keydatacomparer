@@ -19,9 +19,11 @@ import java.sql.Types;
 public class StringResultSetMetaData implements ResultSetMetaData {
 	
 	private String[] naglowki;
+	private int ileKolumn;
 	
 	public StringResultSetMetaData(String[] ngl) {
 		naglowki = ngl;
+		ileKolumn = naglowki.length - 1;
 	}
 
 	@Override
@@ -36,7 +38,7 @@ public class StringResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public int getColumnCount() throws SQLException {
-		return naglowki.length;
+		return ileKolumn;
 	}
 
 	@Override
@@ -76,7 +78,7 @@ public class StringResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public String getColumnLabel(int column) throws SQLException {
-		if (column >= 1 && column <= naglowki.length) {
+		if (column >= 1 && column <= ileKolumn) {
 			return naglowki[column];
 		}
 		throw new SQLException("Wrong column number");
@@ -84,7 +86,7 @@ public class StringResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public String getColumnName(int column) throws SQLException {
-		if (column >= 1 && column <= naglowki.length) {
+		if (column >= 1 && column <= ileKolumn) {
 			return naglowki[column];
 		}
 		throw new SQLException("Wrong column number");
