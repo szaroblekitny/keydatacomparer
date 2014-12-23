@@ -48,12 +48,14 @@ public class StringResultSet implements ResultSet {
 	
 	private final int RESULT_SET_WIDTH;
 	private final int RESULT_SET_HEIGHT;
+	private final int AFTER_LAST_ROW;
 	
+	private static final int BEFORE_FIRST_ROW = 0;
 	private static final int FIRST_ROW = 1;
 	private static final int FIRST_COLUMN = 1;
 	
 	private String[][] resultSet;
-	private int ii = FIRST_ROW;
+	private int ii = BEFORE_FIRST_ROW;
 	
 	public StringResultSet(String[][] dane) throws SQLException {
 		LOGG.debug("StringResultSet constructor");
@@ -61,6 +63,7 @@ public class StringResultSet implements ResultSet {
 		resultSet = dane;
 		RESULT_SET_WIDTH = str.length - 1;
 		RESULT_SET_HEIGHT = dane.length - 1;
+		AFTER_LAST_ROW = dane.length;
 		
 		if (LOGG.isTraceEnabled()) {
 			LOGG.trace("RESULT_SET_WIDTH " + RESULT_SET_WIDTH + " RESULT_SET_HEIGHT " + RESULT_SET_HEIGHT);
@@ -80,14 +83,16 @@ public class StringResultSet implements ResultSet {
 		return false;
 	}
 
+	/**
+	 * Moves the cursor froward one row from its current position.
+	 * A ResultSet cursor is initially positioned before the first row;
+	 * the first call to the method next makes the first row the current row;
+	 * the second call makes the second row the current row, and so on. 
+	 */
 	@Override
 	public boolean next() throws SQLException {
-		if (ii < RESULT_SET_HEIGHT) {
-			ii++;
-			return true;
-		} else {
-			return false;
-		}
+		ii++;
+		return ii < AFTER_LAST_ROW;
 	}
 
 	@Override
@@ -102,7 +107,10 @@ public class StringResultSet implements ResultSet {
 
 	@Override
 	public String getString(int columnIndex) throws SQLException {
-		return resultSet[ii][columnIndex];
+		if (columnIndex >= FIRST_COLUMN && columnIndex <= RESULT_SET_WIDTH) {
+			return resultSet[ii][columnIndex];
+		}
+		throw new SQLException("No row to get data");
 	}
 
 	@Override
@@ -185,7 +193,11 @@ public class StringResultSet implements ResultSet {
 	public String getString(String columnLabel) throws SQLException {
 		for (int kk = FIRST_COLUMN; kk < RESULT_SET_WIDTH; kk++) {
 			if (resultSet[0][kk].equals(columnLabel)) {
-				return resultSet[ii][kk];
+				if (ii < FIRST_ROW || ii > RESULT_SET_HEIGHT) {
+					return resultSet[ii][kk];
+				} else {
+					throw new SQLException("No row to get data");
+				}
 			}
 		}
 		throw new SQLException("No such column");
@@ -305,7 +317,7 @@ public class StringResultSet implements ResultSet {
 				return kk;
 			}
 		}
-		throw new SQLException("Column doesn't exists");
+		throw new SQLException("Column doesn't exist");
 	}
 
 	@Override
@@ -350,12 +362,12 @@ public class StringResultSet implements ResultSet {
 
 	@Override
 	public void beforeFirst() throws SQLException {
-		throw new SQLFeatureNotSupportedException();
+		ii = BEFORE_FIRST_ROW;
 	}
 
 	@Override
 	public void afterLast() throws SQLException {
-		throw new SQLFeatureNotSupportedException();
+		ii = AFTER_LAST_ROW;
 	}
 
 	@Override
