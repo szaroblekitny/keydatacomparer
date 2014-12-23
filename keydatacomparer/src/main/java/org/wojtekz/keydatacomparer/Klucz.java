@@ -17,7 +17,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- * This class implements Comparable for the primary keys data read from the database.
+ * This class implements Comparable for compared data read from a database.
+ * This is only for search records with the same primary key values. Comparison
+ * the rest of data is done by reding data from database.
  * 
  * @author Wojciech Zaręba
  */
@@ -27,9 +29,10 @@ public class Klucz implements Comparable<Klucz> {
     private int dlugosc;
     
     /**
-     * Cobstructor assigns parameter to private field.
+     * The constructor sets primary key fields values. On this base objects Klucz
+     * are stored in a SortedSet object.
      * 
-     * @param listka
+     * @param listka list of primary key fields
      */
     public Klucz(List<String> listka) {
         this.lista.addAll(listka);
@@ -42,7 +45,7 @@ public class Klucz implements Comparable<Klucz> {
     }
     
     /**
-     * Concanets data to String with '$%^' between fields data. Then do comparation
+     * Concanets data to String with '$%^' between fields data. Then do comparison
      * on this String.
      * 
      * @param innaLista the object Klucz type to compare
@@ -100,6 +103,7 @@ public class Klucz implements Comparable<Klucz> {
         return wynikPorownania;
     }
     
+    
     @Override
     public boolean equals(Object obj) {
     	LOGG.trace("Klucz equals starts");
@@ -121,6 +125,7 @@ public class Klucz implements Comparable<Klucz> {
     	return true;
     }
     
+    
     @Override
     public int hashCode() {
     	int hashCode = 0;
@@ -134,14 +139,18 @@ public class Klucz implements Comparable<Klucz> {
     
 
     /**
-     * @return the ArrayList list
+     * Primary key fields list.
+     * 
+     * @return List list
      */
     public List<String> getLista() {
         return lista;
     }
 
     /**
-     * @return the dlugosc
+     * Number of primary key fields.
+     * 
+     * @return integer value
      */
     public int getDlugosc() {
         return dlugosc;

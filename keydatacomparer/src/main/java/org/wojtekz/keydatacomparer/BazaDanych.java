@@ -62,7 +62,7 @@ public abstract class BazaDanych {
     }
     
     /**
-     * Gives connection to the database. Must be implemented for each database vendor.
+     * Gives connection to the database. <p>Must be implemented for each database vendor.</p>
      * 
      * @return the database connection
      * @throws java.sql.SQLException
@@ -73,7 +73,8 @@ public abstract class BazaDanych {
     
     /**
      * It reads primary key for given table from the database and adds primary key
-     * fields as array to the tabelka object. Must be implemented for each database vendor.
+     * fields as array to the tabelka object.
+     * <p>Must be implemented for each database vendor.</p>
      * 
      * @param tabelka the database table representation object
      */
@@ -82,15 +83,18 @@ public abstract class BazaDanych {
     /**
      * Reads fields of the database table tabl and adds to the tabl object.
      * They are <b>not</b> in the primary key and data from they is compared.
-     * Must be implemented for each database vendor.
+     * <p>Must be implemented for each database vendor.</p>
      * 
      * @param tabl database table
      */
     public abstract void getFields(Tabela tabl);
     
     /**
-     * Reads data from record given by primary key of table tabelka as sorted set. It will be used
-     * to compare of records data. Must be implemented for each database vendor.
+     * Reads data from primary key fields and stores sorted as sorted set.
+     * It will be used to compare of records data. Based on these key whole
+     * records will be read and compaed their data.
+     * 
+     * <p>Must be implemented for each database vendor.</p>
      * 
      * @param tabelka database table
      * @return data for primary keys

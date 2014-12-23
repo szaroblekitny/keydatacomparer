@@ -73,7 +73,7 @@ public class Tabela {
     }
     
     /**
-     * Adds column for more detailed description.
+     * Adds column with more detailed description.
      * 
      * @param kolumna column name
      * @param typ column typ
@@ -106,6 +106,8 @@ public class Tabela {
     
 
     /**
+     * Set fields of primary key for this table.
+     * 
      * @param kluGlu the list of fields for primary key to set
      */
     public void setKluczGlowny(List<String> kluGlu) {
@@ -113,21 +115,28 @@ public class Tabela {
     }
     
     /**
-     * @return the nazwaTabeli
+     * Returns table name.
+     * 
+     * @return nazwaTabeli name of the table
      */
     public String getNazwaTabeli() {
         return nazwaTabeli;
     }
 
     /**
-     * @return the kluczGlowny
+     * Returns list of fields for primary key.
+     * 
+     * @return kluczGlowny list of fields
      */
     public List<String> getKluczGlowny() {
         return kluczGlowny;
     }
 
     /**
-     * @return the polaTabeli
+     * Returns list of columns for the table. Each column has name and type stored
+     * in KolumnaTabeli object.
+     * 
+     * @return polaTabeli list of columns with their data
      */
     public List<KolumnaTabeli> getPolaTabeli() {
         return polaTabeli;
