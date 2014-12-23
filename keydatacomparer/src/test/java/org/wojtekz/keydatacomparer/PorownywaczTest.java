@@ -127,7 +127,6 @@ public class PorownywaczTest {
 		doAnswer(new Answer<Tabela>() {
 		      public Tabela answer(InvocationOnMock invocation) {
 		          Object[] args = invocation.getArguments();
-		          // Object mock = invocation.getMock();
 		          Tabela tmpTab = (Tabela) args[0];
 		    	  tmpTab.dodajKolumne("Imie", "VARCHAR2");
 		    	  tmpTab.dodajKolumne("Nazwisko", "VARCHAR2");
@@ -135,10 +134,10 @@ public class PorownywaczTest {
 		      }})
 		  .when(wzorzecMck).getFields(any(Tabela.class));
 		
+		// -----------------
 		doAnswer(new Answer<Tabela>() {
 		      public Tabela answer(InvocationOnMock invocation) {
 		          Object[] args = invocation.getArguments();
-		          // Object mock = invocation.getMock();
 		          Tabela rettab = (Tabela) args[0];
 		    	  List<String> kluGlow = new ArrayList<>();
 		    	  kluGlow.add("GlownyID");
@@ -147,7 +146,7 @@ public class PorownywaczTest {
 		      }})
 		  .when(wzorzecMck).addPrimaryKey(any(Tabela.class));
 		
-		// daneKluczyWzorcowych = wzorzec.daneKluczowe(tabela);
+		// -----------------
 		doAnswer(new Answer<Set<Klucz>>() {
 		      public Set<Klucz> answer(InvocationOnMock invocation) {
 		          return kluczeWzorca;
@@ -160,9 +159,7 @@ public class PorownywaczTest {
 		      }})
 		  .when(kopiaMck).daneKluczowe(any(Tabela.class));
 		
-		
-		
-		// wzorzec.getSchemaAndDatabaseName()
+		// -----------------
 		doAnswer(new Answer<String>() {
 		      public String answer(InvocationOnMock invocation) {
 		          return "Testowy:test";
@@ -176,8 +173,6 @@ public class PorownywaczTest {
 		  .when(kopiaMck).getSchemaAndDatabaseName();
 		
 		
-		// prepStWzor = wzorzecConn.prepareStatement(sqlStatement);
-		// when(mockedList.get(anyInt())).thenReturn("element");
 		try {
 			when(connWzorzecMck.prepareStatement(anyString())).thenReturn(prepStWzorMck);
 			when(connKopiaMck.prepareStatement(anyString())).thenReturn(prepStKopiaMck);
@@ -185,8 +180,7 @@ public class PorownywaczTest {
 			when(prepStWzorMck.executeQuery()).thenReturn(resultWzor);
 			when(prepStKopiaMck.executeQuery()).thenReturn(resultKopia);
 			
-		// ----------------------------------------------------------------------
-		
+			// -----------------
 		
 			Porownywacz comparer = new Porownywacz(writer);
 			LOGG.info("-------- zaczynamy porównanie ----------");
