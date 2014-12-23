@@ -44,6 +44,7 @@ import org.apache.log4j.Logger;
 public class Porownywacz {
 
     private final static Logger LOGG = Logger.getLogger(Porownywacz.class.getName());
+    private static final int ILE_ZNAKOW_W_POLU = 500;
     private Set<Klucz> daneKluczyWzorcowych;
     private Set<Klucz> daneKluczyPorownywanych;
     private Set<Klucz> roznicaWzorca = new HashSet<>();
@@ -62,12 +63,16 @@ public class Porownywacz {
     }
 
     /**
-     * The main method for comparison.
+     * The main method for comparison. For each table it add fields (read from database)
+     * for primary key columns and the rest colmns of table which content will be compared.
+     * Then it read data from tables and do comparison. Results are stored as report
+     * in a file.
      *
      * @param wzorzec source database
      * @param kopia compared database
      * @param nazwyTabel names of compared tables
-     * @throws IOException
+     * @throws IOException file exceptions
+     * @throws SQLException database exceptions
      *
      */
     public void porownuj(BazaDanych wzorzec, BazaDanych kopia, List<String> nazwyTabel)
@@ -267,7 +272,11 @@ public class Porownywacz {
             resultWzor = prepStWzor.executeQuery();
             prepStKopia = kopiaConn.prepareStatement(sqlStatement);
             resultKopia = prepStKopia.executeQuery();
-            ResultSetMetaData rsmd;
+            ResultSetMetaData rsmd = resultWzor.getMetaData();
+            
+            if (LOGG.isDebugEnabled()) {
+            	LOGG.debug("Ile kolumn w tabeli " + tabela.getNazwaTabeli() + ": " + rsmd.getColumnCount());
+            }
 
             boolean saRozne;
             String wartWzor;
@@ -279,10 +288,18 @@ public class Porownywacz {
                 }
 
                 saRozne = false;
-                rsmd = resultWzor.getMetaData();
+                
                 for (int ii = 1; ii <= rsmd.getColumnCount(); ii++) {
+                	if (LOGG.isDebugEnabled()) {
+                    	LOGG.debug("Kolumna " + ii);
+                    }
                     wartWzor = resultWzor.getString(ii);
                     wartKopii = resultKopia.getString(ii);
+                    
+                    if (LOGG.isDebugEnabled()) {
+                    	LOGG.debug("we wzorcu: " + wartWzor + " w kopii: " + wartKopii);
+                    }
+                    
                     if (wartWzor == null ? wartKopii != null : !wartWzor.equals(wartKopii)) {
                         saRozne = true;
                         break;
@@ -305,16 +322,29 @@ public class Porownywacz {
 
     // --------------------------------------------------------------------------------------
     private void wypiszDaneRekordow(ResultSet result) throws IOException, SQLException {
+    	
         String linia = "";
         String pole;
         int ileZnakow;
         String typPola;
+        
+        LOGG.debug("wypiszDaneRekordow fired");
 
         for (int ii = 1; ii <= tabela.getPolaTabeli().size(); ii++) {
+        	if (LOGG.isDebugEnabled()) {
+        		LOGG.debug("Dla pola " + ii + " tabela: " + tabela.getNazwaTabeli());
+        	}
+        	
             ileZnakow = tabela.getPolaTabeli().get(ii - 1).getSzerokosc();
-            if (LOGG.isTraceEnabled()) {
-            	LOGG.trace("znaki: " + ileZnakow);
+            if (ileZnakow == 0) {
+            	ileZnakow = ILE_ZNAKOW_W_POLU;
             }
+            
+            if (LOGG.isTraceEnabled()) {
+            	LOGG.trace("Ile znaków w polu: " + ileZnakow);
+            }
+            
+            
             pole = result.getString(ii);
             if (pole == null) {
                 pole = "";
@@ -323,7 +353,7 @@ public class Porownywacz {
             // jeśli typ danych zawiera CHAR, to formatuj na lewo
             typPola = tabela.getPolaTabeli().get(ii - 1).getTypDanych();
             if (LOGG.isTraceEnabled()) {
-            	LOGG.trace("Typ pola: " + typPola);
+            	LOGG.trace("Pole: " + pole + " typ: " + typPola);
             }
             if (typPola.indexOf("CHAR") > 0) {
                 pole = padRight(pole, ileZnakow);
@@ -345,10 +375,16 @@ public class Porownywacz {
 
     // --------------------------------------------------------------------------------------
     private String padRight(String str, int n) {
+    	if (LOGG.isTraceEnabled()) {
+        	LOGG.trace("format: " + "%1$-" + n + "s **>" + str);
+        }
         return String.format("%1$-" + n + "s", str);
     }
 
     private String padLeft(String str, int n) {
+    	if (LOGG.isTraceEnabled()) {
+        	LOGG.trace("format: " + "%1$" + n + "s **>" + str);
+        }
         return String.format("%1$" + n + "s", str);
     }
 }
