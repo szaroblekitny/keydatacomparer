@@ -18,10 +18,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -44,11 +42,9 @@ import org.apache.log4j.Logger;
 public class Porownywacz {
 
     private final static Logger LOGG = Logger.getLogger(Porownywacz.class.getName());
-    private static final int ILE_ZNAKOW_W_POLU = 500;
-    private Set<Klucz> daneKluczyWzorcowych;
-    private Set<Klucz> daneKluczyPorownywanych;
-    private Set<Klucz> roznicaWzorca = new HashSet<>();
-    private Set<Klucz> wspolneRekordy;
+    private static final int ILE_ZNAKOW_W_POLU = 30;
+    private SortedSet<Klucz> daneKluczyWzorcowych;
+    private SortedSet<Klucz> daneKluczyPorownywanych;
     private FileWriter zapisywacz;
     private Tabela tabela;
 
@@ -134,7 +130,8 @@ public class Porownywacz {
             
             if (daneKluczyWzorcowych != null) {
             	if (LOGG.isDebugEnabled()) {
-            		wyswietlDebugKluczy((SortedSet<Klucz>) daneKluczyWzorcowych);
+            		LOGG.debug("klucze wzorca");
+            		wyswietlDebugKluczy(daneKluczyWzorcowych);
             	}
             } else {
                 LOGG.warn("Brak danych z kluczy głównych dla "
@@ -145,7 +142,8 @@ public class Porownywacz {
             
            	if (daneKluczyPorownywanych != null) {
            		if (LOGG.isDebugEnabled()) {
-           			wyswietlDebugKluczy((SortedSet<Klucz>) daneKluczyPorownywanych);
+           			LOGG.debug("klucze porownywane");
+           			wyswietlDebugKluczy(daneKluczyPorownywanych);
            		}
            	}
            	else {
@@ -158,42 +156,50 @@ public class Porownywacz {
             // i daje sumę zbiorów
             // metoda removeAll daje niesymetryczną różnicę zbiorów i zwraca true, jeśli operacja
             // zmienia wielkość zbioru
-            roznicaWzorca.addAll(daneKluczyWzorcowych);
-            if (!roznicaWzorca.addAll(daneKluczyPorownywanych)) {
-                LOGG.debug("brak różnic w danych kluczy");
+            SortedSet<Klucz> tmpSet = new TreeSet<Klucz>(daneKluczyWzorcowych);
+            
+            if (!tmpSet.addAll(daneKluczyPorownywanych)) {
+                LOGG.debug("wzorzec nie zmienia się po dodaniu porównania");
             } else {
-                LOGG.debug("Dodanie udane");
-                pokazRoznice((SortedSet<Klucz>) daneKluczyWzorcowych, (SortedSet<Klucz>) daneKluczyPorownywanych,
-                        "Rekordy, które są we wzorcu, a nie ma w porównaniu");
-                pokazRoznice((SortedSet<Klucz>) daneKluczyPorownywanych, (SortedSet<Klucz>) daneKluczyWzorcowych,
-                        "Rekordy, które są w porównaniu, a nie ma we wzorcu");
+                LOGG.debug("Dodanie porównania udane");
+                SortedSet<Klucz> kopiaWzor = new TreeSet<>(daneKluczyWzorcowych);
+                SortedSet<Klucz> kopiaKopii = new TreeSet<>(daneKluczyPorownywanych);
+                pokazRoznice(kopiaKopii, kopiaWzor, "Rekordy, które są w porównaniu, a nie ma we wzorcu");
+            }
+            
+            // czyścimy i sprawdzamy w drugą stronę
+            tmpSet.clear();
+            LOGG.debug("Różnica kopii");
+            tmpSet.addAll(daneKluczyPorownywanych);
+            if (!tmpSet.addAll(daneKluczyWzorcowych)) {
+            	LOGG.debug("kopia nie zmienia się po dodaniu wzorca");
+            } else {
+            	LOGG.debug("Dodanie wzorca udane");
+            	SortedSet<Klucz> kopiaWzor = new TreeSet<>(daneKluczyWzorcowych);
+                SortedSet<Klucz> kopiaKopii = new TreeSet<>(daneKluczyPorownywanych);
+                pokazRoznice(kopiaWzor, kopiaKopii, "Rekordy, które są we wzorcu, a nie ma w porównaniu");
             }
 
-			if (daneKluczyWzorcowych != null && daneKluczyPorownywanych != null) {
-				LOGG.debug("Część wspólna");
-				wspolneRekordy = new TreeSet<>();
-				/*
-				 *  Najpierw tworzymy zbiór wszystkich rekordów. Potem stosujemy metodę retainAll,
-				 *  która zachowuje w zbiorze wspolneRekordy tylko elementy występujące kolejno w obu
-				 *  zbiorach.
-				 */
-				if (!wspolneRekordy.addAll(daneKluczyWzorcowych) && !wspolneRekordy.addAll(daneKluczyPorownywanych)) {
-					LOGG.debug("pusto w danych kluczy");
-				} else {
-					if (wspolneRekordy.retainAll(daneKluczyPorownywanych)
-							|| wspolneRekordy.retainAll(daneKluczyWzorcowych)) {
-						if (LOGG.isDebugEnabled()) {
-							LOGG.debug("empty: " + wspolneRekordy.isEmpty());  
-						}
-						pokazRozneRekordy((SortedSet<Klucz>)wspolneRekordy,
-								wzorzec.getDbconnection(),
-								kopia.getDbconnection());
-					} else {
-						LOGG.debug("retain nic nie zmienia");
-					}
-				}
+			LOGG.debug("Część wspólna");
+			/*
+			 *  Najpierw tworzymy zbiór wszystkich rekordów. Potem stosujemy metodę retainAll,
+			 *  która zachowuje w zbiorze wspolneRekordy tylko elementy występujące kolejno w obu
+			 *  zbiorach.
+			 */
+			tmpSet.clear();
+			LOGG.debug("Dodaję wzorzec");
+			wyswietlDebugKluczy(daneKluczyWzorcowych);
+			tmpSet.addAll(daneKluczyWzorcowych);
+			LOGG.debug("Mamy kopię");
+			wyswietlDebugKluczy(daneKluczyPorownywanych);
+			tmpSet.retainAll(daneKluczyPorownywanych);
+			LOGG.debug("Intersekcja");
+			wyswietlDebugKluczy(tmpSet);
+			
+			if (tmpSet.isEmpty()) {
+				LOGG.debug("częśc wspólna jest pusta");
 			} else {
-				LOGG.error("BRAK KLUCZOWYCH DANYCH");
+				pokazRozneRekordy(tmpSet, wzorzec.getDbconnection(), kopia.getDbconnection());
 			}
 
         }
@@ -265,7 +271,7 @@ public class Porownywacz {
             sqlStatement = BazaDanych.tworzenieSelecta(tabela, iter);
             
             if (LOGG.isTraceEnabled()) {
-                LOGG.trace("sqlStatement: " + sqlStatement);
+                LOGG.trace("sqlStatement: >" + sqlStatement + "<");
             }
             
             prepStWzor = wzorzecConn.prepareStatement(sqlStatement);
@@ -282,6 +288,7 @@ public class Porownywacz {
             String wartWzor;
             String wartKopii;
 
+            // teoretycznie powinien byc jeden rekord
             while (resultWzor.next()) {
                 if (!resultKopia.next()) {
                     throw new SQLException("Liczba rekordów w kopii inna niż we wzorcu");
