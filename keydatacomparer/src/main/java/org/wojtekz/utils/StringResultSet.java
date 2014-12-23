@@ -35,6 +35,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 /**
  * Very simple ResultSet implementation for testing.
  * 
@@ -42,6 +44,8 @@ import java.util.Map;
  *
  */
 public class StringResultSet implements ResultSet {
+	private final static Logger LOGG = Logger.getLogger(StringResultSet.class.getName());
+	
 	private final int RESULT_SET_WIDTH;
 	private final int RESULT_SET_HEIGHT;
 	
@@ -52,10 +56,15 @@ public class StringResultSet implements ResultSet {
 	private int ii = FIRST_ROW;
 	
 	public StringResultSet(String[][] dane) throws SQLException {
+		LOGG.debug("StringResultSet constructor");
 		String [] str = dane[0];
 		resultSet = dane;
-		RESULT_SET_WIDTH = dane.length - 1;
-		RESULT_SET_HEIGHT = str.length - 1;
+		RESULT_SET_WIDTH = str.length - 1;
+		RESULT_SET_HEIGHT = dane.length - 1;
+		
+		if (LOGG.isTraceEnabled()) {
+			LOGG.trace("RESULT_SET_WIDTH " + RESULT_SET_WIDTH + " RESULT_SET_HEIGHT " + RESULT_SET_HEIGHT);
+		}
 		if (RESULT_SET_WIDTH < 0 || RESULT_SET_HEIGHT < 0) {
 			throw new SQLException("Bad test data");
 		}
