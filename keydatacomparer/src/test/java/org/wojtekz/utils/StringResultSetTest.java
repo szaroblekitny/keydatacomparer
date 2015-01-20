@@ -5,12 +5,15 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class StringResultSetTest {
+	private final static Logger LOGG = Logger.getLogger(StringResultSetTest.class.getName());
+	
 	private static String[][] dane = {
 			{"RowId", "GlownyID", "Imie", "Nazwisko"},
 			{"AAA", "1", "Jan", "Kowalski"},
@@ -22,6 +25,7 @@ public class StringResultSetTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		LOGG.trace("StringResultSetTest before set up");
 		rs = new StringResultSet(dane);
 	}
 	
@@ -57,10 +61,13 @@ public class StringResultSetTest {
 
 	@Test
 	public void testGetStringString() {
+		LOGG.trace("StringResultSetTest testGetStringString fired");
 		try {
 			String wyn = rs.getString("GlownyID");
+			LOGG.debug("wynik: " + wyn + " a ma byc 1");
 			Assert.assertEquals("1", wyn);
 		} catch (SQLException ee) {
+			LOGG.error("SQL Error", ee);
 			Assert.fail();
 		}
 	}

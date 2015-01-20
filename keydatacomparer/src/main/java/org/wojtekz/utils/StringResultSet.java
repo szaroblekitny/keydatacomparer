@@ -193,7 +193,7 @@ public class StringResultSet implements ResultSet {
 	public String getString(String columnLabel) throws SQLException {
 		for (int kk = FIRST_COLUMN; kk < RESULT_SET_WIDTH; kk++) {
 			if (resultSet[0][kk].equals(columnLabel)) {
-				if (ii < FIRST_ROW || ii > RESULT_SET_HEIGHT) {
+				if (ii >= FIRST_ROW && ii <= RESULT_SET_HEIGHT) {
 					return resultSet[ii][kk];
 				} else {
 					throw new SQLException("No row to get data");
