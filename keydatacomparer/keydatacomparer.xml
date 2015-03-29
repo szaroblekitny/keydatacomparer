@@ -14,7 +14,7 @@ paid for it (that is zero if you did not pay anything).
         <sourcedatabase>
           <host>localhost</host>
             <port>1521</port>
-            <name>ora11</name>
+            <name>WZDATA</name>
             <username>hr</username>
             <userpassword>password</userpassword>
         </sourcedatabase>
@@ -22,15 +22,14 @@ paid for it (that is zero if you did not pay anything).
         <compareddatabase>
             <host>localhost</host>
             <port>1521</port>
-            <name>ora11</name>
+            <name>WZDATA</name>
             <username>scott</username>
             <userpassword>password</userpassword>
         </compareddatabase>
         
     </databases>
     <tables>
-        <table>CONFIGURACJA</table>
-        <table>RECONFIGURACJA</table>
+        <table>KONFIGURACJA</table>
     </tables>
     <!-- <logging file="log4j.xml" /> -->
     <logging file="log4j.xml" />
