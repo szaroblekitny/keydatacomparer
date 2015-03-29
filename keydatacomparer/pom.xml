@@ -7,6 +7,7 @@
   <version>0.3-SNAPSHOT</version>
   <name>Key data comparer</name>
   
+  
   <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -43,6 +44,7 @@
 		</dependency>
 		
 	</dependencies>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -53,6 +55,28 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+    			<groupId>org.apache.maven.plugins</groupId>
+    			<artifactId>maven-shade-plugin</artifactId>
+    			<version>2.3</version>
+    			<executions>
+      				<execution>
+        				<phase>package</phase>
+        				<goals>
+          					<goal>shade</goal>
+        				</goals>
+        				<configuration>
+          					<transformers>
+            					<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+              						<mainClass>org.wojtekz.keydatacomparer.KeyDataComparer</mainClass>
+            					</transformer>
+          					</transformers>
+        				</configuration>
+      				</execution>
+    			</executions>
+  			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
