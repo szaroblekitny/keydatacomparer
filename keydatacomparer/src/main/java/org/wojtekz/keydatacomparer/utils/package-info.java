@@ -13,4 +13,4 @@
 /**
  * The package for utilities of Key data comparer.
  */
-package org.wojtekz.utils;
+package org.wojtekz.keydatacomparer.utils;

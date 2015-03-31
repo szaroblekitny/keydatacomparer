@@ -10,7 +10,7 @@
  paid for it (that is zero if you did not pay anything).
  */
 
-package org.wojtekz.utils;
+package org.wojtekz.keydatacomparer.utils;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

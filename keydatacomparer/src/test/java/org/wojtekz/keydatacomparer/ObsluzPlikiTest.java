@@ -13,8 +13,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.wojtekz.utils.DaneTestowe;
-import org.wojtekz.utils.SprawdzPlikXML;
+import org.wojtekz.keydatacomparer.utils.DaneTestowe;
+import org.wojtekz.keydatacomparer.utils.SprawdzPlikXML;
 import org.xml.sax.SAXException;
 
 public class ObsluzPlikiTest {

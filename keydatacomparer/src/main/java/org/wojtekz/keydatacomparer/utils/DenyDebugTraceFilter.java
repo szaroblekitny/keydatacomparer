@@ -9,7 +9,7 @@
  in any way, you may only recover direct damages up to the amount you
  paid for it (that is zero if you did not pay anything).
  */
-package org.wojtekz.utils;
+package org.wojtekz.keydatacomparer.utils;
 
 // import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;

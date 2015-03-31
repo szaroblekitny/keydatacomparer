@@ -1,4 +1,4 @@
-package org.wojtekz.utils;
+package org.wojtekz.keydatacomparer.utils;
 
 import java.io.BufferedWriter;
 import java.io.File;

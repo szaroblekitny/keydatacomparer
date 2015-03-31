@@ -31,8 +31,8 @@ import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.wojtekz.utils.DaneTestowe;
-import org.wojtekz.utils.StringResultSet;
+import org.wojtekz.keydatacomparer.utils.DaneTestowe;
+import org.wojtekz.keydatacomparer.utils.StringResultSet;
 
 /**
  * The big test for class Porownywacz. This is the core of Keydatacomparer application.

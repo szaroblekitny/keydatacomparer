@@ -23,7 +23,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.wojtekz.utils.SprawdzPlikXML;
+import org.wojtekz.keydatacomparer.utils.SprawdzPlikXML;
 import org.xml.sax.SAXException;
 
 /**
