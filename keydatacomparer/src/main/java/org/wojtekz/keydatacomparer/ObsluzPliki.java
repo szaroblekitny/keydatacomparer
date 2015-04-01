@@ -13,6 +13,7 @@ package org.wojtekz.keydatacomparer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,16 +58,17 @@ public class ObsluzPliki {
     private List<String> nazwyTabel = new ArrayList<>();
 
     /**
-     * Reads XML file and checks it against xsd/keydatacomparer.xsd file.
+     * It reads XML file and checks it against xsd/keydatacomparer.xsd file.
      * 
      * @param plikXML the XML configuration file.
      * 
      * @throws IOException
      * @throws SAXException
      * @throws ParserConfigurationException
+     * @throws ClassNotFoundException 
      */
     public ObsluzPliki(String plikXML)
-            throws IOException, SAXException, ParserConfigurationException {
+            throws IOException, SAXException, ParserConfigurationException, ClassNotFoundException {
         obsluga(plikXML, "xsd/keydatacomparer.xsd");
     }
     
@@ -80,19 +82,29 @@ public class ObsluzPliki {
      * @throws IOException
      * @throws SAXException
      * @throws ParserConfigurationException
+     * @throws ClassNotFoundException 
      */
     private void obsluga(String plik1, String plik2)
-            throws IOException, SAXException, ParserConfigurationException {
+            throws IOException, SAXException, ParserConfigurationException, ClassNotFoundException {
         File plikXML = new File(plik1);
-        File plikXSD = new File(plik2);
+        // File plikXSD = new File(plik2);
+        
+        // InputStream xsdStream = getResourceAsStream(plik1);
+        
+        Class<?> cls = Class.forName("org.wojtekz.keydatacomparer.ObsluzPliki");
 
-        SprawdzPlikXML.sprawdzFormalnie(plikXSD, plikXML);
+        // returns the ClassLoader object associated with this Class
+        ClassLoader cLoader = cls.getClassLoader();
+        // input stream
+        InputStream xsdStream = cLoader.getResourceAsStream(plik2);
+        SprawdzPlikXML sprawdzarka = new SprawdzPlikXML();
+        sprawdzarka.sprawdzFormalnie(xsdStream, plikXML);
         
         if (LOGG.isDebugEnabled()) {
         	LOGG.info(plikXML + " jest poprawny");
         }
         
-        Document docxml = SprawdzPlikXML.zrobDocXMLZpliku(plikXML);
+        Document docxml = sprawdzarka.zrobDocXMLZpliku(plikXML);
         
         Element xmlElem = docxml.getDocumentElement();
         if (LOGG.isDebugEnabled()) {

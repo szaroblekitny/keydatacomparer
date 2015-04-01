@@ -2,7 +2,9 @@ package org.wojtekz.keydatacomparer;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -53,7 +55,7 @@ public class ObsluzPlikiTest {
 			Assert.assertEquals(tabele, obsPlk.getNazwyTabel());
 			Assert.assertEquals(1521, obsPlk.getCompportnumber());
 			Assert.assertEquals("scott", obsPlk.getCompusername());
-		} catch (IOException | SAXException | ParserConfigurationException ee) {
+		} catch (IOException | SAXException | ParserConfigurationException | ClassNotFoundException ee) {
 			LOGG.error("Sprawdzenie nieudane", ee);
 			Assert.fail();
 		}
@@ -63,10 +65,17 @@ public class ObsluzPlikiTest {
 	@Test
 	public void testFormalnyPliku() {
 		LOGG.info("Sprawdzenie poprawności formalnej");
-		File plikXSD = new File("xsd/keydatacomparer.xsd");
+		File plikXSD = new File("src/main/resources/xsd/keydatacomparer.xsd");
 		try {
-			SprawdzPlikXML.sprawdzFormalnie(plikXSD, testFile);
-		} catch (IOException | ParserConfigurationException | SAXException ee) {
+			InputStream xsdInpStream = new FileInputStream(plikXSD);
+			if (LOGG.isDebugEnabled()) {
+				LOGG.debug("Stream ma: " + xsdInpStream.available() + " bajtów");
+			}
+			
+			
+			SprawdzPlikXML sprawdzarka = new SprawdzPlikXML();
+			sprawdzarka.sprawdzFormalnie(xsdInpStream, testFile);
+		} catch (IOException | ParserConfigurationException | SAXException  ee) {
 			LOGG.error("Sprawdzenie nieudane", ee);
 			Assert.fail();
 		}
