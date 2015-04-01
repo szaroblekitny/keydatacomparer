@@ -248,6 +248,8 @@ public class PorownywaczTest {
 			
 			reader.close();
 			
+			LOGG.info("-------- porównanie udane ----------");
+			
 		} catch (Exception ee) {
 			LOGG.error("Porównanie zawiodło: ", ee);
 			Assert.fail();
