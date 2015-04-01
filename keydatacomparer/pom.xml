@@ -4,7 +4,7 @@
   <groupId>org.wojtekz</groupId>
   <artifactId>keydatacomparer</artifactId>
   <packaging>jar</packaging>
-  <version>0.4-SNAPSHOT</version>
+  <version>v0.1-alpha</version>
   <name>Key data comparer</name>
   
   
