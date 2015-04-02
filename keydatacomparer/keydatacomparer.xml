@@ -31,6 +31,4 @@ paid for it (that is zero if you did not pay anything).
     <tables>
         <table>KONFIGURACJA</table>
     </tables>
-    <!-- <logging file="log4j.xml" /> -->
-    <logging file="log4j.xml" />
 </keydatacomparer>
