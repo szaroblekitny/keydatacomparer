@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+
+body {
+	background-color:lightgray
+}
+
+p, h1, h2 {
+    font-family: Sans-serif;
+    /* font-size: large; */
+}
+
+code {
+	font-size: large;
+}
