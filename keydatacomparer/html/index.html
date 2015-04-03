@@ -16,6 +16,8 @@ to databases, reads the list of tables to compare and their fields, compares dat
 with the same data <b>in primary key fields</b> in compared tables, and finally produces report as a plain text file:
 records missing in databases and records with differences. It assumes that compared tables have primary keys
 and on it is based comparison.</p>
+<h4>Note</h4>
+<p>Currently only Oracle database (11g) is supported. PostgreSQL and MySQL are planned.</p>
 <h2>Usage</h2>
 <code>java -jar keydatacomparer-<i>version</i>.jar conf_file.xml [output_file.txt]</code>
 <p><code>conf_file.xml</code> must conform <a href="../src/main/resources/xsd/keydatacomparer.xsd">keydatacomparer.xsd</a> schema, something like this:</p>
