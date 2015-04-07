@@ -101,7 +101,9 @@ public class OracleDB extends BazaDanych {
             }
 
         } catch (SQLException ex) {
+        	// the original exception's message and stack trace should be logged or passed forward
             LOGG.error("Błąd SQL: " + ex.getMessage());
+            throw new RuntimeException(ex);
         }
 
         tabelka.setKluczGlowny(kluGlu);
@@ -156,6 +158,7 @@ public class OracleDB extends BazaDanych {
 
         } catch (SQLException ex) {
             LOGG.error("Błąd SQL: " + ex.getMessage());
+            throw new RuntimeException(ex);
         }
     }
 
@@ -199,6 +202,7 @@ public class OracleDB extends BazaDanych {
             	result.close();
             	
             } catch (SQLException sex) {
+            	LOGG.debug("Zeruję liczbę rekordów", sex);
             	ileRekordow = 0;
             } finally {
             	prepState.close();
@@ -252,6 +256,7 @@ public class OracleDB extends BazaDanych {
 
         } catch (SQLException ex) {
             LOGG.error("Błąd SQL (daneKluczowe): " + ex.getMessage());
+            throw new RuntimeException(ex);
         }
 
         return daneKluczy;

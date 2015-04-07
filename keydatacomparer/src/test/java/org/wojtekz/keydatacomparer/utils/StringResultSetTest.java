@@ -25,13 +25,13 @@ public class StringResultSetTest {
 
 
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	public static void setUpBeforeClass() throws SQLException {
 		LOGG.trace("StringResultSetTest before set up");
 		rs = new StringResultSet(dane);
 	}
 	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws SQLException {
 		rs.first();
 	}
 
@@ -45,6 +45,7 @@ public class StringResultSetTest {
 				Assert.fail("next false");
 			}
 		} catch (SQLException ee) {
+			LOGG.error("SQL Error", ee);
 			Assert.fail();
 		}
 	}
@@ -55,6 +56,7 @@ public class StringResultSetTest {
 			String wyn = rs.getString(3);
 			Assert.assertEquals("Kowalski", wyn);
 		} catch (SQLException ee) {
+			LOGG.error("SQL Error", ee);
 			Assert.fail();
 		}
 		
@@ -78,6 +80,7 @@ public class StringResultSetTest {
 		try {
 			Assert.assertTrue(rs.isFirst());
 		} catch (SQLException ee) {
+			LOGG.error("SQL Error", ee);
 			Assert.fail();
 		}
 	}
@@ -87,6 +90,7 @@ public class StringResultSetTest {
 		try {
 			Assert.assertFalse(rs.isLast());
 		} catch (SQLException ee) {
+			LOGG.error("SQL Error", ee);
 			Assert.fail();
 		}
 	}
@@ -100,6 +104,7 @@ public class StringResultSetTest {
 			rs.first();
 			Assert.assertEquals("Jan", rs.getString(2));
 		} catch (SQLException ee) {
+			LOGG.error("SQL Error", ee);
 			Assert.fail();
 		}
 	}
@@ -114,6 +119,7 @@ public class StringResultSetTest {
 			}
 
 		} catch (SQLException ee) {
+			LOGG.error("SQL Error", ee);
 			Assert.fail();
 		}
 	}
@@ -131,6 +137,7 @@ public class StringResultSetTest {
 				Assert.assertEquals(nazwy[ii], nazwaKolumny);
 			}
 		} catch (SQLException ee) {
+			LOGG.error("SQL Error", ee);
 			Assert.fail();
 		}
 	}
