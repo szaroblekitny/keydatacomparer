@@ -37,7 +37,7 @@ public class OracleDB extends BazaDanych {
             String haslo) {
         super(nazwaBazy, nazwaHosta, numerPortu, schemat, haslo);
 
-        LOGG.info("database " + database);
+        LOGG.info("Oracle database " + database);
         LOGG.info("hostname " + hostname);
         LOGG.info("portnumber " + portnumber);
         LOGG.info("username " + username);
