@@ -48,7 +48,7 @@ public class KeyDataComparer {
     }
 
     /**
-     * Main method of application. Reads configuration file and makes comparison.
+     * Main method of application. It reads configuration file and makes comparison.
      * 
      * @param args the command line arguments: config file name and optional output file name
      */
