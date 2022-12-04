@@ -210,7 +210,7 @@ public abstract class BazaDanych {
     }
     
     /**
-     * Concatenation of database and username String in form &lt;database>:&lt;username>.
+     * Concatenation of database and username String in form &lt;database&gt;:&lt;username&gt;.
      * 
      * @return String with schema and database for displaing
      */
