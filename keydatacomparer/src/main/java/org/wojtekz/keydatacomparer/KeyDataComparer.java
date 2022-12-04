@@ -20,8 +20,8 @@ import java.sql.SQLException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
 /**
@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
  */
 public class KeyDataComparer {
 
-    private final static Logger LOGG = Logger.getLogger(KeyDataComparer.class.getName());
+    private final static Logger LOGG = LogManager.getLogger(KeyDataComparer.class.getName());
     private static BazaDanych bazaWzorcowa;
     private static BazaDanych bazaPorownywana;
     private static File outputFile;
@@ -53,9 +53,6 @@ public class KeyDataComparer {
      * @param args the command line arguments: config file name and optional output file name
      */
     public static void main(String[] args) {
-        // Log configuration based on standard log4j.properties file
-    	@SuppressWarnings("unused")
-		PropertyConfigurator log4jConfig = new PropertyConfigurator();
         LOGG.info("Key data comparer starts");
 
         if (args.length != 1 && args.length != 2) {

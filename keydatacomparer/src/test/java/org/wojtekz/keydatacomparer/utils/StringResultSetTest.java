@@ -5,7 +5,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -13,7 +14,7 @@ import org.junit.Test;
 import org.wojtekz.keydatacomparer.utils.StringResultSet;
 
 public class StringResultSetTest {
-	private final static Logger LOGG = Logger.getLogger(StringResultSetTest.class.getName());
+	private final static Logger LOGG = LogManager.getLogger(StringResultSetTest.class.getName());
 	
 	private static String[][] dane = {
 			{"RowId", "GlownyID", "Imie", "Nazwisko"},

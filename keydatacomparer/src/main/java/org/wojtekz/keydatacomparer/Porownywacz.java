@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Compares tables from two databases. It connects to both databases and for
@@ -41,7 +42,7 @@ import org.apache.log4j.Logger;
  */
 public class Porownywacz {
 
-    private final static Logger LOGG = Logger.getLogger(Porownywacz.class.getName());
+    private final static Logger LOGG = LogManager.getLogger(Porownywacz.class.getName());
     private static final int ILE_ZNAKOW_W_POLU = 30;
     private SortedSet<Klucz> daneKluczyWzorcowych;
     private SortedSet<Klucz> daneKluczyPorownywanych;

@@ -14,7 +14,8 @@ package org.wojtekz.keydatacomparer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class implements Comparable for compared data read from a database.
@@ -24,7 +25,7 @@ import org.apache.log4j.Logger;
  * @author Wojciech Zaręba
  */
 public class Klucz implements Comparable<Klucz> {
-    private final static Logger LOGG = Logger.getLogger(Klucz.class.getName());
+    private final static Logger LOGG = LogManager.getLogger(Klucz.class.getName());
     private List<String> lista = new ArrayList<>();
     private int dlugosc;
     

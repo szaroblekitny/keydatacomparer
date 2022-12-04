@@ -9,7 +9,8 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,7 +21,7 @@ import org.wojtekz.keydatacomparer.utils.SprawdzPlikXML;
 import org.xml.sax.SAXException;
 
 public class ObsluzPlikiTest {
-	private final static Logger LOGG = Logger.getLogger(ObsluzPlikiTest.class.getName());
+	private final static Logger LOGG = LogManager.getLogger(ObsluzPlikiTest.class.getName());
 	
 	private static File testFile;
 	

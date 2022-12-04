@@ -14,18 +14,18 @@ package org.wojtekz.keydatacomparer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * Represents the database table. It have primary key and fields of the table
- * given by name. Class Porownywacz fetch records of the table and do
- * comparation.
+ * Represents a database table. It has a primary key and table field names.
+ * The Comparer class fetches records and performs a comparison.
  *
  * @author Wojciech Zaręba
  */
 public class Tabela {
 
-    private final static Logger LOGG = Logger.getLogger(Tabela.class.getName());
+    private final static Logger LOGG = LogManager.getLogger(Tabela.class.getName());
 
     // Properties of class Tabela
     private String nazwaTabeli;

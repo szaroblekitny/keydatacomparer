@@ -19,7 +19,8 @@ import java.util.TreeSet;
 
 import oracle.jdbc.pool.OracleDataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Extends BazaDanych class for implementation of Oracle database.
@@ -28,7 +29,7 @@ import org.apache.log4j.Logger;
  */
 public class OracleDB extends BazaDanych {
 
-    private final static Logger LOGG = Logger.getLogger(OracleDB.class.getName());
+    private final static Logger LOGG = LogManager.getLogger(OracleDB.class.getName());
 
     public OracleDB(String nazwaBazy,
             String nazwaHosta,

@@ -2,22 +2,20 @@ package org.wojtekz.keydatacomparer;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TabelaTest {
-	private final static Logger logg = Logger.getLogger(TabelaTest.class.getName());
+	private final static Logger logg = LogManager.getLogger(TabelaTest.class.getName());
 	
 	private Tabela tabela;
 	private ArrayList<String> kluczyk = new ArrayList<String>();
 
 	@Before
 	public void setUp() throws Exception {
-		PropertyConfigurator.configure(TabelaTest.class.getClassLoader()
-                .getResource("log4j.properties"));
 		kluczyk.add("K1");
 		kluczyk.add("K2");
 		kluczyk.add("K3");

@@ -35,7 +35,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Very simple ResultSet implementation for testing.
@@ -44,7 +45,7 @@ import org.apache.log4j.Logger;
  *
  */
 public class StringResultSet implements ResultSet {
-	private final static Logger LOGG = Logger.getLogger(StringResultSet.class.getName());
+	private final static Logger LOGG = LogManager.getLogger(StringResultSet.class.getName());
 	
 	private final int RESULT_SET_WIDTH;
 	private final int RESULT_SET_HEIGHT;

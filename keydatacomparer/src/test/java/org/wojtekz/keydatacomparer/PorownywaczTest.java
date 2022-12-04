@@ -20,7 +20,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -42,7 +43,7 @@ import org.wojtekz.keydatacomparer.utils.StringResultSet;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class PorownywaczTest {
-	private final static Logger LOGG = Logger.getLogger(PorownywaczTest.class.getName());
+	private final static Logger LOGG = LogManager.getLogger(PorownywaczTest.class.getName());
 	
 	private static File outputFile;
 	private static FileWriter writer;
