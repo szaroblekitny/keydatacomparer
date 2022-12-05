@@ -47,9 +47,11 @@ public class OracleDB extends BazaDanych {
 
     @Override
     public Connection databaseConnection() throws SQLException {
-        // "jdbc:oracle:thin:hr/password@localhost:1521:wzdata"
+    	// jdbc:oracle:thin:uesr/password@//oracle.server.domain:1522/service_name
+
         this.connectUrl = "jdbc:oracle:thin:" + this.username + "/" + this.userpassword
-                + "@" + this.hostname + ":" + this.portnumber + ":" + this.database;
+                + "@//" + this.hostname + ":" + this.portnumber + "/" + this.database;
+
         if (LOGG.isDebugEnabled()) {
         	LOGG.debug("URL: " + connectUrl);
         }
