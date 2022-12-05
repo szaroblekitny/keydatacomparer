@@ -84,11 +84,15 @@ public class Porownywacz {
             wzorzec.addPrimaryKey(tabela);
             
             if (LOGG.isDebugEnabled()) {
-                LOGG.debug("Klucz główny dla " + tabela.getNazwaTabeli());
-                LOGG.debug(tabela.getKluczGlowny().toString());
+                LOGG.debug("Primary key for table " + tabela.getNazwaTabeli() + ":");
+                if (tabela.getKluczGlowny().isEmpty()) {
+                	LOGG.debug("== No primary key ==");
+                } else {
+                	LOGG.debug(tabela.getKluczGlowny().toString());
+                }
             }
 
-            zapisywacz.write("Porównanie dla tabeli " + tabela.getNazwaTabeli() + "\n");
+            zapisywacz.write("Comparison for table " + tabela.getNazwaTabeli() + "\n");
 
             // TODO Tu jest podskórne założenie, że pola tabeli w obu bazach są identyczne,
             // oczywiście nie musi być to prawdą. W każdym razie bierzemy tabele z bazy
@@ -99,7 +103,7 @@ public class Porownywacz {
 
             if (LOGG.isDebugEnabled()) {
                 for (int ii = 0; ii < polaTabeli.size(); ii++) {
-                    LOGG.debug("Pola tabeli " + tabela.getNazwaTabeli() + ": "
+                    LOGG.debug("Table " + tabela.getNazwaTabeli() + " columns: "
                             + polaTabeli.get(ii).getNazwaKolumnny()
                             + " " + polaTabeli.get(ii).getTypDanych()
                             + " " + polaTabeli.get(ii).getPrecyzja()
@@ -108,7 +112,7 @@ public class Porownywacz {
             }
 
             // dla ułatwienia analizy wypisujemy pola tabeli 
-            zapisywacz.write("Pola tabeli:\n");
+            zapisywacz.write("Table columns:\n");
             String wypPola = "";
             for (int ii = 0; ii < polaTabeli.size(); ii++) {
                 wypPola += polaTabeli.get(ii).getNazwaKolumnny() + "|";
@@ -118,7 +122,7 @@ public class Porownywacz {
             	wypPola = wypPola.substring(0, wypPola.length() - 1);
             	zapisywacz.write(wypPola + "\n");
             } else {
-            	zapisywacz.write("Brak pól w tabeli\n");
+            	zapisywacz.write("No columns in the table\n");
             }
 
             /*
@@ -135,7 +139,7 @@ public class Porownywacz {
             		wyswietlDebugKluczy(daneKluczyWzorcowych);
             	}
             } else {
-                LOGG.warn("Brak danych z kluczy głównych dla "
+                LOGG.warn("No primary key data for "
                            + wzorzec.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
@@ -143,16 +147,16 @@ public class Porownywacz {
             
            	if (daneKluczyPorownywanych != null) {
            		if (LOGG.isDebugEnabled()) {
-           			LOGG.debug("klucze porownywane");
+           			LOGG.debug("Compared keys");
            			wyswietlDebugKluczy(daneKluczyPorownywanych);
            		}
            	}
            	else {
-           		LOGG.warn("Brak danych z kluczy głównych dla "
+           		LOGG.warn("No primary key data for "
                        + kopia.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
             }
 
-            LOGG.debug("Różnica wzorca");
+            LOGG.debug("Difference for source data");
             // metoda addAll zwraca true, jeśli dodawana kolekcja zmienia wielkość zbioru
             // i daje sumę zbiorów
             // metoda removeAll daje niesymetryczną różnicę zbiorów i zwraca true, jeśli operacja
@@ -160,45 +164,45 @@ public class Porownywacz {
             SortedSet<Klucz> tmpSet = new TreeSet<Klucz>(daneKluczyWzorcowych);
             
             if (!tmpSet.addAll(daneKluczyPorownywanych)) {
-                LOGG.debug("wzorzec nie zmienia się po dodaniu porównania");
+                LOGG.debug("The source data does not change after adding the compared data");
             } else {
-                LOGG.debug("Dodanie porównania udane");
+                LOGG.debug("Successful addition of compare records");
                 SortedSet<Klucz> kopiaWzor = new TreeSet<>(daneKluczyWzorcowych);
                 SortedSet<Klucz> kopiaKopii = new TreeSet<>(daneKluczyPorownywanych);
-                pokazRoznice(kopiaKopii, kopiaWzor, "Rekordy, które są w porównaniu, a nie ma we wzorcu");
+                pokazRoznice(kopiaKopii, kopiaWzor, "Records that are in the compared data but not in the source");
             }
             
             // czyścimy i sprawdzamy w drugą stronę
             tmpSet.clear();
-            LOGG.debug("Różnica kopii");
+            LOGG.debug("Difference for compare data");
             tmpSet.addAll(daneKluczyPorownywanych);
             if (!tmpSet.addAll(daneKluczyWzorcowych)) {
-            	LOGG.debug("kopia nie zmienia się po dodaniu wzorca");
+            	LOGG.debug("The compare data does not change after adding the source data");
             } else {
-            	LOGG.debug("Dodanie wzorca udane");
+            	LOGG.debug("Successful addition of source records");
             	SortedSet<Klucz> kopiaWzor = new TreeSet<>(daneKluczyWzorcowych);
                 SortedSet<Klucz> kopiaKopii = new TreeSet<>(daneKluczyPorownywanych);
-                pokazRoznice(kopiaWzor, kopiaKopii, "Rekordy, które są we wzorcu, a nie ma w porównaniu");
+                pokazRoznice(kopiaWzor, kopiaKopii, "Records that are in the source data but not in the compared data");
             }
 
-			LOGG.debug("Część wspólna");
+			LOGG.debug("Intersection");
 			/*
 			 *  Najpierw tworzymy zbiór wszystkich rekordów. Potem stosujemy metodę retainAll,
 			 *  która zachowuje w zbiorze wspolneRekordy tylko elementy występujące kolejno w obu
 			 *  zbiorach.
 			 */
 			tmpSet.clear();
-			LOGG.debug("Dodaję wzorzec");
+			LOGG.debug("Source data added");
 			wyswietlDebugKluczy(daneKluczyWzorcowych);
 			tmpSet.addAll(daneKluczyWzorcowych);
-			LOGG.debug("Mamy kopię");
+			LOGG.debug("Compare data added");
 			wyswietlDebugKluczy(daneKluczyPorownywanych);
 			tmpSet.retainAll(daneKluczyPorownywanych);
-			LOGG.debug("Intersekcja");
+			LOGG.debug("Intersection");
 			wyswietlDebugKluczy(tmpSet);
 			
 			if (tmpSet.isEmpty()) {
-				LOGG.debug("częśc wspólna jest pusta");
+				LOGG.debug("Intersection is empty");
 			} else {
 				pokazRozneRekordy(tmpSet, wzorzec.getDbconnection(), kopia.getDbconnection());
 			}
@@ -212,7 +216,7 @@ public class Porownywacz {
 		if (klucze != null) {
 			String str = "";
 			if (LOGG.isDebugEnabled()) {
-				LOGG.debug("Dane kluczy porow: " + klucze.size());
+				LOGG.debug("Compare data: " + klucze.size());
 			}
 			for (Klucz iterator : klucze) {
 				for (int ii = 0; ii < iterator.getDlugosc(); ii++) {
@@ -224,7 +228,7 @@ public class Porownywacz {
 				str = "";
 			}
 		} else {
-			LOGG.warn("Klucze puste!");
+			LOGG.warn("No primary key data");
 		}
     }
 
@@ -240,7 +244,7 @@ public class Porownywacz {
         co.removeAll(doCzego);
         if (!co.isEmpty()) {  // są rekordy w różnicy
         	if (LOGG.isDebugEnabled()) {
-        		LOGG.debug("Komunikat: " + komunikat);
+        		LOGG.debug("Message: " + komunikat);
         	}
             zapisywacz.write("\n" + komunikat + ":\n");
             for (Iterator<Klucz> it = co.iterator(); it.hasNext();) {
@@ -267,7 +271,7 @@ public class Porownywacz {
         ResultSet resultKopia;
         String sqlStatement;
 
-        zapisywacz.write("\nRóżne rekordy w obu bazach\n");
+        zapisywacz.write("\nDifferent records\n");
         for (Klucz iter : wspolne) {
             sqlStatement = BazaDanych.tworzenieSelecta(tabela, iter);
             
@@ -282,7 +286,7 @@ public class Porownywacz {
             ResultSetMetaData rsmd = resultWzor.getMetaData();
             
             if (LOGG.isDebugEnabled()) {
-            	LOGG.debug("Ile kolumn w tabeli " + tabela.getNazwaTabeli() + ": " + rsmd.getColumnCount());
+            	LOGG.debug("Number of columns in the table " + tabela.getNazwaTabeli() + ": " + rsmd.getColumnCount());
             }
 
             boolean saRozne;
@@ -292,20 +296,20 @@ public class Porownywacz {
             // teoretycznie powinien byc jeden rekord
             while (resultWzor.next()) {
                 if (!resultKopia.next()) {
-                    throw new SQLException("Liczba rekordów w kopii inna niż we wzorcu");
+                    throw new SQLException("The number of records in the copy is different than in the source");
                 }
 
                 saRozne = false;
                 
                 for (int ii = 1; ii <= rsmd.getColumnCount(); ii++) {
                 	if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("Kolumna " + ii);
+                    	LOGG.debug("Column " + ii);
                     }
                     wartWzor = resultWzor.getString(ii);
                     wartKopii = resultKopia.getString(ii);
                     
                     if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("we wzorcu: " + wartWzor + " w kopii: " + wartKopii);
+                    	LOGG.debug("In the source: " + wartWzor + " in the compare data: " + wartKopii);
                     }
                     
                     if (wartWzor == null ? wartKopii != null : !wartWzor.equals(wartKopii)) {
@@ -315,10 +319,10 @@ public class Porownywacz {
                 }
 
                 if (saRozne) {
-                    zapisywacz.write("Wzor : ");
+                    zapisywacz.write("Source data: ");
                     wypiszDaneRekordow(resultWzor);
 
-                    zapisywacz.write("Kopia: ");
+                    zapisywacz.write("Compare data: ");
                     wypiszDaneRekordow(resultKopia);
                 }
             }
@@ -340,7 +344,7 @@ public class Porownywacz {
 
         for (int ii = 1; ii <= tabela.getPolaTabeli().size(); ii++) {
         	if (LOGG.isDebugEnabled()) {
-        		LOGG.debug("Dla pola " + ii + " tabela: " + tabela.getNazwaTabeli());
+        		LOGG.debug("Column " + ii + " in table: " + tabela.getNazwaTabeli());
         	}
         	
             ileZnakow = tabela.getPolaTabeli().get(ii - 1).getSzerokosc();
@@ -349,7 +353,7 @@ public class Porownywacz {
             }
             
             if (LOGG.isTraceEnabled()) {
-            	LOGG.trace("Ile znaków w polu: " + ileZnakow);
+            	LOGG.trace("Number of characters in the column: " + ileZnakow);
             }
             
             
@@ -361,7 +365,7 @@ public class Porownywacz {
             // jeśli typ danych zawiera CHAR, to formatuj na lewo
             typPola = tabela.getPolaTabeli().get(ii - 1).getTypDanych();
             if (LOGG.isTraceEnabled()) {
-            	LOGG.trace("Pole: " + pole + " typ: " + typPola);
+            	LOGG.trace("column: " + pole + " type: " + typPola);
             }
             if (typPola.indexOf("CHAR") > 0) {
                 pole = padRight(pole, ileZnakow);
@@ -374,7 +378,7 @@ public class Porownywacz {
         linia = linia.substring(0, linia.length() - 1);
         linia = linia.trim();
         if (LOGG.isTraceEnabled()) {
-        	LOGG.trace("linia: " + linia);
+        	LOGG.trace("Line: " + linia);
         }
         zapisywacz.write(linia + "\n");
     }

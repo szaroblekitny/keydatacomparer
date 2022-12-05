@@ -39,7 +39,7 @@ public class Tabela {
      */
     public Tabela(String nazwa) {
     	if (LOGG.isDebugEnabled()) {
-    		LOGG.debug("Nowa pusta tabela " + nazwa);
+    		LOGG.debug("New empty table " + nazwa);
     	}
         this.nazwaTabeli = nazwa;
     }
@@ -68,7 +68,7 @@ public class Tabela {
         kolumnaTabeli.setTypDanych(typ);
         boolean add = polaTabeli.add(kolumnaTabeli);
         if (LOGG.isTraceEnabled()) {
-        	LOGG.trace("Dodałem kolumnę " + kolumna + " - " + add);
+        	LOGG.trace("Column added: " + kolumna + " - " + add);
         }
     }
     
@@ -95,11 +95,11 @@ public class Tabela {
         kolumnaTabeli.setSzerokosc(szerokosc);
         if (polaTabeli.add(kolumnaTabeli)) {
             if (LOGG.isTraceEnabled()) {
-                LOGG.trace("Dodałem kolumnę " + kolumna);
+                LOGG.trace("Column added: " + kolumna);
             }
         } else {
         	if (LOGG.isDebugEnabled()) {
-        		LOGG.debug("Dodanie kolumny " + kolumna + " nieudane");
+        		LOGG.debug("Column addition failed for " + kolumna);
         	}
         }
     }

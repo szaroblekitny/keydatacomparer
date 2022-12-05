@@ -88,9 +88,6 @@ public class ObsluzPliki {
     private void obsluga(String plik1, String plik2)
             throws IOException, SAXException, ParserConfigurationException, ClassNotFoundException {
         File plikXML = new File(plik1);
-        // File plikXSD = new File(plik2);
-        
-        // InputStream xsdStream = getResourceAsStream(plik1);
         
         Class<?> cls = Class.forName("org.wojtekz.keydatacomparer.ObsluzPliki");
 
@@ -102,7 +99,7 @@ public class ObsluzPliki {
         sprawdzarka.sprawdzFormalnie(xsdStream, plikXML);
         
         if (LOGG.isDebugEnabled()) {
-        	LOGG.info(plikXML + " jest poprawny");
+        	LOGG.info("file " + plikXML + " is valid");
         }
         
         Document docxml = sprawdzarka.zrobDocXMLZpliku(plikXML);
@@ -149,7 +146,7 @@ public class ObsluzPliki {
             }
         }
 
-        ///--- compareddatabase
+        ///--- NodeList for compareddatabase
         sourcedbNL = docxml.getElementsByTagName("compareddatabase");
         if (sourcedbNL != null && sourcedbNL.getLength() > 0) {
             for (int ii = 0; ii < sourcedbNL.getLength(); ii++) {
@@ -193,7 +190,7 @@ public class ObsluzPliki {
         LOGG.debug("Tables:");
         sourcedbNL = docxml.getElementsByTagName("table");
         if (LOGG.isDebugEnabled()) {
-            LOGG.debug("długość NL: " + sourcedbNL.getLength());
+            LOGG.debug("NodeList length: " + sourcedbNL.getLength());
         }
         if (sourcedbNL != null && sourcedbNL.getLength() > 0) {
             for (int ii = 0; ii < sourcedbNL.getLength(); ii++) {
@@ -210,10 +207,6 @@ public class ObsluzPliki {
                 }
             }
         }
-        ///---
-
-        /// TODO - dorobić konfigurację loggera
-
     }  // end of obsluga
 
 
@@ -288,7 +281,7 @@ public class ObsluzPliki {
     }
 
     /**
-     * @return the nazwyTabel
+     * @return the nazwyTabel list
      */
     public List<String> getNazwyTabel() {
         return nazwyTabel;

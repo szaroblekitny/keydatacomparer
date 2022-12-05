@@ -228,24 +228,24 @@ public class PorownywaczTest {
 			String wynik = reader.readLine();
 			Assert.assertEquals("---------------------------------------------", wynik);
 			wynik = reader.readLine();
-			Assert.assertEquals("Porównanie dla tabeli Tab1", wynik);
+			Assert.assertEquals("Comparison for table Tab1", wynik);
 			wynik = reader.readLine();
-			Assert.assertEquals("Pola tabeli:", wynik);
+			Assert.assertEquals("Table columns:", wynik);
 			wynik = reader.readLine();
 			Assert.assertEquals("GlownyID|Imie|Nazwisko", wynik);
 			wynik = reader.readLine();
 			wynik = reader.readLine();
-			Assert.assertEquals("Rekordy, które są we wzorcu, a nie ma w porównaniu:", wynik);
+			Assert.assertEquals("Records that are in the source data but not in the compared data:", wynik);
 			wynik = reader.readLine();
 			Assert.assertEquals("2", wynik);
 			wynik = reader.readLine();
 			wynik = reader.readLine();
-			Assert.assertEquals("Różne rekordy w obu bazach", wynik);
+			Assert.assertEquals("Different records", wynik);
 			wynik = reader.readLine();
 			wynik = reader.readLine();
-			Assert.assertEquals("Wzor : 3                             |Kazimiera                     |Brzoza", wynik);
+			Assert.assertEquals("Source data: 3                             |Kazimiera                     |Brzoza", wynik);
 			wynik = reader.readLine();
-			Assert.assertEquals("Kopia: 3                             |Kazimierz                     |Brzoza", wynik);
+			Assert.assertEquals("Compare data: 3                             |Kazimierz                     |Brzoza", wynik);
 			
 			reader.close();
 			
