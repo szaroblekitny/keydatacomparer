@@ -55,17 +55,19 @@ public class Klucz implements Comparable<Klucz> {
      */
     @Override
     public int compareTo(Klucz innaLista) {
+    	LOGG.trace("compareTo begins");
+
         int wynikPorownania = 0;
         // int wielkoscListy = lista.size();
         List<String> innyArray = innaLista.getLista();
         StringBuilder lancuchListy = new StringBuilder();
         StringBuilder lancuchInnejListy = new StringBuilder();
         String lancuszek;
-        
+
         if (LOGG.isTraceEnabled()) {
             LOGG.trace("wielkoscListy: " + this.getDlugosc());
         }
-        
+
         for (int ii = 0; ii < this.getDlugosc(); ii++) {
             lancuszek = this.lista.get(ii) + "$%^";
             if (LOGG.isTraceEnabled()) {
@@ -73,11 +75,11 @@ public class Klucz implements Comparable<Klucz> {
             }
             lancuchListy.append(lancuszek);
         }
-        
+
         if (LOGG.isTraceEnabled()) {
         	LOGG.trace("lancuchListy: " + lancuchListy.toString());
         }
-        
+
         for (int jj = 0; jj < innyArray.size(); jj++) {
             lancuszek = innyArray.get(jj) + "$%^";
             if (LOGG.isTraceEnabled()) {
@@ -85,26 +87,26 @@ public class Klucz implements Comparable<Klucz> {
             }
             lancuchInnejListy.append(lancuszek);
         }
-        
+
         if (LOGG.isTraceEnabled()) {
         	LOGG.trace("lancuchInnejListy: " + lancuchInnejListy.toString());
         }
-        
+
         if ("".equals(lancuchListy.toString()) || "".equals(lancuchInnejListy.toString())) {
             // nigdy nie zachodzi w teorii
             wynikPorownania = 0;
         } else {
             wynikPorownania = lancuchListy.toString().compareTo(lancuchInnejListy.toString());
         }
-        
+
         if (LOGG.isTraceEnabled()) {
         	LOGG.trace("wynikPorownania: " + wynikPorownania);
         }
-        
+
         return wynikPorownania;
     }
-    
-    
+
+
     @Override
     public boolean equals(Object obj) {
     	LOGG.trace("Klucz equals starts");
@@ -121,23 +123,23 @@ public class Klucz implements Comparable<Klucz> {
     	} else {
     		return false;
     	}
-    	
+
     	LOGG.trace("Klucz equals fine equal");
     	return true;
     }
-    
-    
+
+
     @Override
     public int hashCode() {
     	int hashCode = 0;
-    	
+
     	for (String str : this.getLista()) {
     		hashCode += str.hashCode();
     	}
-    	
+
     	return hashCode;
     }
-    
+
 
     /**
      * Primary key fields data.

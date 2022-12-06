@@ -87,8 +87,13 @@ public class ObsluzPliki {
      */
     private void obsluga(String plik1, String plik2)
             throws IOException, SAXException, ParserConfigurationException, ClassNotFoundException {
+
+    	if (LOGG.isDebugEnabled()) {
+    		LOGG.info("obsluga --> plik1: " + plik1 + " plik2: " + plik2);
+    	}
+
         File plikXML = new File(plik1);
-        
+
         Class<?> cls = Class.forName("org.wojtekz.keydatacomparer.ObsluzPliki");
 
         // returns the ClassLoader object associated with this Class
@@ -97,13 +102,13 @@ public class ObsluzPliki {
         InputStream xsdStream = cLoader.getResourceAsStream(plik2);
         SprawdzPlikXML sprawdzarka = new SprawdzPlikXML();
         sprawdzarka.sprawdzFormalnie(xsdStream, plikXML);
-        
+
         if (LOGG.isDebugEnabled()) {
         	LOGG.info("file " + plikXML + " is valid");
         }
-        
+
         Document docxml = sprawdzarka.zrobDocXMLZpliku(plikXML);
-        
+
         Element xmlElem = docxml.getDocumentElement();
         if (LOGG.isDebugEnabled()) {
         	LOGG.debug("Root: " + xmlElem.getNodeName());
@@ -201,12 +206,14 @@ public class ObsluzPliki {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     tableName = node.getTextContent();
                     if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug(ii + ": " + tableName);
+                    	LOGG.debug("Element " + ii + ": " + tableName);
                     }
                     this.getNazwyTabel().add(tableName);
                 }
             }
         }
+        
+        LOGG.debug("The end of obsluga");
     }  // end of obsluga
 
 

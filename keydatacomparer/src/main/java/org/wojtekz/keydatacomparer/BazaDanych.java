@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Represents a database. Must be implement for the database vendor (Oracle,
  * MySQL, PostgreSQL and so forth).
@@ -23,6 +26,8 @@ import java.util.SortedSet;
  * @author Wojciech Zaręba
  */
 public abstract class BazaDanych {
+	private final static Logger LOGG = LogManager.getLogger();
+	
     protected String database;
     protected String hostname;
     protected int portnumber;
@@ -110,6 +115,7 @@ public abstract class BazaDanych {
      * @return SQL select for getting data to compare
      */
     public static String tworzenieSelecta(Tabela tabela, Klucz klucz) {
+    	LOGG.debug("tworzenieSelecta begins");
 
         StringBuilder sqlStatement = new StringBuilder("select ");
 
@@ -135,6 +141,9 @@ public abstract class BazaDanych {
         // ucinamy końcowy przecinek
         String finalSQL = sqlStatement.substring(0, sqlStatement.toString().length() - 2);
 
+        if (LOGG.isTraceEnabled()) {
+        	LOGG.debug("SQL: " + finalSQL);
+        }
         return finalSQL;
     }
 

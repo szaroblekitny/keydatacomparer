@@ -68,7 +68,7 @@ public class OracleDB extends BazaDanych {
     @Override
     public void addPrimaryKey(Tabela tabelka) {
     	if (LOGG.isDebugEnabled()) {
-    		LOGG.debug("addDatabaseTable: " + tabelka.getNazwaTabeli());
+    		LOGG.debug("OracleDB addDatabaseTable: " + tabelka.getNazwaTabeli());
     	}
         List<String> kluGlu = new ArrayList<>();  // klucz główny
         PreparedStatement prepState;
@@ -112,6 +112,8 @@ public class OracleDB extends BazaDanych {
 
     @Override
     public void getFields(Tabela tabelka) {
+    	LOGG.debug("OracleDB getFields for: " + tabelka.getNazwaTabeli());
+    	
         PreparedStatement prepState;
         ResultSet result;
         String kolumna;
@@ -171,6 +173,8 @@ public class OracleDB extends BazaDanych {
      */
     @Override
     public SortedSet<Klucz> daneKluczowe(Tabela tabelka) {
+    	LOGG.debug("OracleDB daneKluczowe for: " + tabelka.getNazwaTabeli());
+
         SortedSet<Klucz> daneKluczy = new TreeSet<>();
         PreparedStatement prepState;
         ResultSet result;
