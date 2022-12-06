@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
  * @author Wojciech Zaręba
  */
 public abstract class BazaDanych {
-	private final static Logger LOGG = LogManager.getLogger();
+	private final static Logger LOGG = LogManager.getLogger(BazaDanych.class.getName());
 	
     protected String database;
     protected String hostname;

@@ -85,7 +85,7 @@ public class OracleDB extends BazaDanych {
                     + "and acc.constraint_name = alc.constraint_name "
                     + "order by acc.position";
             if (LOGG.isDebugEnabled()) {
-            	LOGG.debug("SQL:" + sqlStatement);
+            	LOGG.debug("addPrimaryKey SQL: " + sqlStatement);
             }
             prepState = getDbconnection().prepareStatement(sqlStatement);
             result = prepState.executeQuery();
@@ -112,7 +112,9 @@ public class OracleDB extends BazaDanych {
 
     @Override
     public void getFields(Tabela tabelka) {
-    	LOGG.debug("OracleDB getFields for: " + tabelka.getNazwaTabeli());
+    	if (LOGG.isDebugEnabled()) {
+    		LOGG.debug("OracleDB getFields for: " + tabelka.getNazwaTabeli());
+    	}
     	
         PreparedStatement prepState;
         ResultSet result;
@@ -123,22 +125,6 @@ public class OracleDB extends BazaDanych {
         int szer_pola;
 
         try {
-            /*  wersja pomijająca pola klucza głównego, ale robimy prościej
-            String sqlStatement =
-                    "select col.column_name, col.data_type, col.data_precision, col.data_scale, col.data_length "
-                    + "from sys.all_tab_columns col "
-                    + "where col.OWNER = '" + this.username.toUpperCase() + "' "
-                    + "and col.TABLE_NAME = '" + tabelka.getNazwaTabeli().toUpperCase() + "' "
-                    + "and col.column_name not in (select acc.column_name "
-                    + "from sys.all_constraints alc, SYS.all_cons_columns acc "
-                    + "where alc.OWNER = col.owner "
-                    + "and alc.table_name = col.table_name "
-                    + "and alc.constraint_type = 'P' "
-                    + "and acc.owner = alc.owner "
-                    + "and acc.constraint_name = alc.constraint_name) "
-                    + "order by col.column_id";
-                    */
-            
             String sqlStatement =
                     "select col.column_name, col.data_type, col.data_precision, col.data_scale, col.data_length "
                     + "from sys.all_tab_columns col "
@@ -146,7 +132,9 @@ public class OracleDB extends BazaDanych {
                     + "and col.TABLE_NAME = '" + tabelka.getNazwaTabeli().toUpperCase() + "' "
                     + "order by col.column_id";
 
-            LOGG.debug(sqlStatement);
+            if (LOGG.isDebugEnabled()) {
+            	LOGG.debug("getFields SQL: " + sqlStatement);
+            }
             prepState = getDbconnection().prepareStatement(sqlStatement);
             result = prepState.executeQuery();
 
@@ -229,7 +217,7 @@ public class OracleDB extends BazaDanych {
 				sqlStatement = sqlStatement.substring(0,
 						sqlStatement.length() - 2);
 				if (LOGG.isDebugEnabled()) {
-					LOGG.debug(sqlStatement);
+					LOGG.debug("daneKluczowe SQL: " + sqlStatement);
 				}
 				prepState = getDbconnection().prepareStatement(sqlStatement);
 				result = prepState.executeQuery();
