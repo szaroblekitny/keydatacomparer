@@ -99,6 +99,9 @@ public class KeyDataComparer {
         } finally {
             LOGG.info("Key data comparer ends");
         }
+
+        // closing the log manager
+        LogManager.shutdown();
     }
     
     /**
