@@ -235,7 +235,7 @@ public class PorownywaczTest {
 			Assert.assertEquals("GlownyID|Imie|Nazwisko", wynik);
 			wynik = reader.readLine();
 			wynik = reader.readLine();
-			Assert.assertEquals("Records that are in the source data but not in the compared data:", wynik);
+			Assert.assertEquals("Records that are in the source data but not in the compared data (key fields values):", wynik);
 			wynik = reader.readLine();
 			Assert.assertEquals("2", wynik);
 			wynik = reader.readLine();
@@ -243,7 +243,7 @@ public class PorownywaczTest {
 			Assert.assertEquals("Different records", wynik);
 			wynik = reader.readLine();
 			wynik = reader.readLine();
-			Assert.assertEquals("Source data: 3                             |Kazimiera                     |Brzoza", wynik);
+			Assert.assertEquals(" Source data: 3                             |Kazimiera                     |Brzoza", wynik);
 			wynik = reader.readLine();
 			Assert.assertEquals("Compare data: 3                             |Kazimierz                     |Brzoza", wynik);
 			

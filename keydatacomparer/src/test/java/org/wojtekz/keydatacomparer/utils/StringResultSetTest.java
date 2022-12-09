@@ -11,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.wojtekz.keydatacomparer.utils.StringResultSet;
 
 public class StringResultSetTest {
 	private final static Logger LOGG = LogManager.getLogger(StringResultSetTest.class.getName());

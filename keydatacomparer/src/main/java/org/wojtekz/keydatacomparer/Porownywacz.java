@@ -135,7 +135,7 @@ public class Porownywacz {
             
             if (daneKluczyWzorcowych != null) {
             	if (LOGG.isDebugEnabled()) {
-            		LOGG.debug("klucze wzorca");
+            		LOGG.debug("Source key data:");
             		wyswietlDebugKluczy(daneKluczyWzorcowych);
             	}
             } else {
@@ -147,7 +147,7 @@ public class Porownywacz {
             
            	if (daneKluczyPorownywanych != null) {
            		if (LOGG.isDebugEnabled()) {
-           			LOGG.debug("Compared keys");
+           			LOGG.debug("Compared key data:");
            			wyswietlDebugKluczy(daneKluczyPorownywanych);
            		}
            	}
@@ -169,7 +169,7 @@ public class Porownywacz {
                 LOGG.debug("Successful addition of compare records");
                 SortedSet<Klucz> kopiaWzor = new TreeSet<>(daneKluczyWzorcowych);
                 SortedSet<Klucz> kopiaKopii = new TreeSet<>(daneKluczyPorownywanych);
-                pokazRoznice(kopiaKopii, kopiaWzor, "Records that are in the compared data but not in the source");
+                pokazRoznice(kopiaKopii, kopiaWzor, "Records that are in the compared data but not in the source (key fields values)");
             }
             
             // czyścimy i sprawdzamy w drugą stronę
@@ -182,7 +182,7 @@ public class Porownywacz {
             	LOGG.debug("Successful addition of source records");
             	SortedSet<Klucz> kopiaWzor = new TreeSet<>(daneKluczyWzorcowych);
                 SortedSet<Klucz> kopiaKopii = new TreeSet<>(daneKluczyPorownywanych);
-                pokazRoznice(kopiaWzor, kopiaKopii, "Records that are in the source data but not in the compared data");
+                pokazRoznice(kopiaWzor, kopiaKopii, "Records that are in the source data but not in the compared data (key fields values)");
             }
 
 			LOGG.debug("Intersection");
@@ -216,7 +216,7 @@ public class Porownywacz {
 		if (klucze != null) {
 			String str = "";
 			if (LOGG.isDebugEnabled()) {
-				LOGG.debug("Compare data: " + klucze.size());
+				LOGG.debug("Size of the key data: " + klucze.size());
 			}
 			for (Klucz iterator : klucze) {
 				for (int ii = 0; ii < iterator.getDlugosc(); ii++) {
@@ -228,7 +228,7 @@ public class Porownywacz {
 				str = "";
 			}
 		} else {
-			LOGG.warn("No primary key data");
+			LOGG.warn("SortedSet klucze is null!");
 		}
     }
 
@@ -237,14 +237,14 @@ public class Porownywacz {
             throws IOException {
         String wypRozn = "";
 
-        LOGG.debug("pokazRoznice");
+        LOGG.debug("pokazRoznice begins");
         wyswietlDebugKluczy(co);
         wyswietlDebugKluczy(doCzego);
         
         co.removeAll(doCzego);
         if (!co.isEmpty()) {  // są rekordy w różnicy
         	if (LOGG.isDebugEnabled()) {
-        		LOGG.debug("Message: " + komunikat);
+        		LOGG.debug("pokazRoznice message: " + komunikat);
         	}
             zapisywacz.write("\n" + komunikat + ":\n");
             for (Iterator<Klucz> it = co.iterator(); it.hasNext();) {
@@ -319,7 +319,7 @@ public class Porownywacz {
                 }
 
                 if (saRozne) {
-                    zapisywacz.write("Source data: ");
+                    zapisywacz.write(" Source data: ");
                     wypiszDaneRekordow(resultWzor);
 
                     zapisywacz.write("Compare data: ");
@@ -355,7 +355,6 @@ public class Porownywacz {
             if (LOGG.isTraceEnabled()) {
             	LOGG.trace("Number of characters in the column: " + ileZnakow);
             }
-            
             
             pole = result.getString(ii);
             if (pole == null) {

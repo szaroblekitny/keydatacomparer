@@ -60,7 +60,7 @@ public class OracleDB extends BazaDanych {
         ods.setURL(this.connectUrl);
         dbconnection = ods.getConnection();
 
-        LOGG.info("Mamy połączenie " + this.database);
+        LOGG.info("There is a connection to " + this.database);
 
         return getDbconnection();
     }
@@ -95,16 +95,16 @@ public class OracleDB extends BazaDanych {
                 if (poleKlucza != null) {
                     if (kluGlu.add(poleKlucza)) {
                     	if (LOGG.isDebugEnabled()) {
-                    		LOGG.debug("Do klucza dodaję pole " + poleKlucza);
+                    		LOGG.debug("Field added to key " + poleKlucza);
                     	}
                     } else {
-                        LOGG.warn("Dodanie klucza nieudane");
+                        LOGG.warn("Adding field to key failed");
                     }
                 }
             }
 
         } catch (SQLException ex) {
-            LOGG.error("Błąd SQL: " + ex.getMessage());
+            LOGG.error("addPrimaryKey SQL error: " + ex.getMessage());
         }
 
         tabelka.setKluczGlowny(kluGlu);
@@ -148,7 +148,7 @@ public class OracleDB extends BazaDanych {
             }
 
         } catch (SQLException ex) {
-            LOGG.error("Błąd SQL: " + ex.getMessage());
+            LOGG.error("getFields SQL error: " + ex.getMessage());
         }
     }
 
@@ -184,11 +184,11 @@ public class OracleDB extends BazaDanych {
             try {
             	result = prepState.executeQuery();
             	if(!result.next()) {
-            		LOGG.error("Nie można policzyć");
+            		LOGG.error("Records cannot be counted");
             	}
             	ileRekordow = result.getInt(1);
             	if (LOGG.isDebugEnabled()) {
-            		LOGG.debug("Liczba rekordów (" + getSchemaAndDatabaseName() + "/"
+            		LOGG.debug("Number of records (" + getSchemaAndDatabaseName() + "/"
             			+ tabelka.getNazwaTabeli() +"): " + ileRekordow);
             	}
             	result.close();
@@ -235,18 +235,18 @@ public class OracleDB extends BazaDanych {
 					}
 
 					if (!daneKluczy.add(new Klucz(rekord)) && LOGG.isDebugEnabled()) {
-						LOGG.debug("Nieudaczne dodanie");
+						LOGG.debug("Failed to add the data of the key");
 					}
 					rekord.clear();
 				} // while (result.next())
 				
 				if (LOGG.isDebugEnabled()) {
-					LOGG.debug("Ile w kluczach: " + daneKluczy.size());
+					LOGG.debug("Size of daneKluczy set: " + daneKluczy.size());
 				}
 			}
 
         } catch (SQLException ex) {
-            LOGG.error("Błąd SQL (daneKluczowe): " + ex.getMessage());
+            LOGG.error("SQL error (daneKluczowe): " + ex.getMessage());
         }
 
         return daneKluczy;

@@ -56,8 +56,8 @@ public class KeyDataComparer {
         LOGG.info("Key data comparer starts");
 
         if (args.length != 1 && args.length != 2) {
-            LOGG.fatal("Argumentem jest nazwa pliku z tabelami do porównania i opcjonalnie nazwa pliku z raportem");
-            throw new RuntimeException("Podaj argument[y]");
+            LOGG.fatal("The parameter is the name of the file with the tables to be compared (xml format) and, optionally, the name of the report file.");
+            throw new RuntimeException("Parameter is expected");
         }
         
         if (args.length == 2) {
@@ -95,7 +95,7 @@ public class KeyDataComparer {
         } catch (ParserConfigurationException ex) {
             LOGG.error("ParserConfigurationException: " + ex.getMessage(), ex);
         } catch (Exception ex) {
-            LOGG.error("Błędny błąd", ex);
+            LOGG.error("Wrong error: ", ex);
         } finally {
             LOGG.info("Key data comparer ends");
         }
@@ -113,34 +113,38 @@ public class KeyDataComparer {
      */
     private static void porownajIZapisz(ObsluzPliki obslugaPlikow) throws IOException, SQLException {
     	FileWriter zapisywacz = new FileWriter(outputFile); 
-        zapisywacz.write("Porównanie baz \n");
-        zapisywacz.write("Baza wzorcowa: " + bazaWzorcowa.getDatabase() +
+        zapisywacz.write("Databases to compare:\n");
+        zapisywacz.write("Source: " + bazaWzorcowa.getDatabase() +
                     "/" + bazaWzorcowa.getUsername() + "\n");
-        zapisywacz.write("Baza porównywana: " + bazaPorownywana.getDatabase() + 
+        zapisywacz.write("Compared: " + bazaPorownywana.getDatabase() + 
                     "/" + bazaPorownywana.getUsername() + "\n");
             
         Connection bwzorConn = bazaWzorcowa.databaseConnection();
         Connection bporowConn = bazaPorownywana.databaseConnection();
 
         if (LOGG.isTraceEnabled()) {
-            LOGG.trace("Mamy popr. połączenie wzor" + bwzorConn.isValid(10));
-            LOGG.trace("Mamy popr. połączenie por" + bporowConn.isValid(11));
+            LOGG.trace("Source connection is valid: " + bwzorConn.isValid(10));
+            LOGG.trace("Compared connection is valid: " + bporowConn.isValid(11));
         }
         Porownywacz por = new Porownywacz(zapisywacz);
         por.porownuj(bazaWzorcowa, bazaPorownywana, obslugaPlikow.getNazwyTabel());
             
         zapisywacz.write("======================================================\n");
-        zapisywacz.write("**** KONIEC PORÓWNANIA ****\n");
+        zapisywacz.write("**** THE END OF COMPARISON ****\n");
         zapisywacz.close();
 
         if (bwzorConn != null) {
             bwzorConn.close();
-            LOGG.debug("Połączenie bazy wzorcowej zamknięte");
+            if (bwzorConn.isClosed()) {
+            	LOGG.debug("Source connection is closed");
+            }
         }
             
         if (bporowConn != null) {
             bporowConn.close();
-            LOGG.debug("Połączenie bazy porównywanej zamknięte");
+            if (bporowConn.isClosed()) {
+            	LOGG.debug("Compare connection is closed");
+            }
         }
         
     }
