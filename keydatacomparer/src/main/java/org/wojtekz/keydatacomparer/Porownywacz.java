@@ -94,7 +94,7 @@ public class Porownywacz {
 
             zapisywacz.write("Comparison for table " + tabela.getNazwaTabeli() + "\n");
 
-            // TODO Tu jest podskórne założenie, że pola tabeli w obu bazach są identyczne,
+            // Tu jest podskórne założenie, że pola tabeli w obu bazach są identyczne,
             // oczywiście nie musi być to prawdą. W każdym razie bierzemy tabele z bazy
             // wzorcowej.
             wzorzec.getFields(tabela);
@@ -366,7 +366,7 @@ public class Porownywacz {
             if (LOGG.isTraceEnabled()) {
             	LOGG.trace("column: " + pole + " type: " + typPola);
             }
-            if (typPola.indexOf("CHAR") > 0) {
+            if (typPola.contains("CHAR")) {
                 pole = padRight(pole, ileZnakow);
             } else {
                 pole = padLeft(pole, ileZnakow);
