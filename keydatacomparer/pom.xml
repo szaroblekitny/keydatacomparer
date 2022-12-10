@@ -70,6 +70,9 @@
           					<transformers>
             					<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
               						<mainClass>org.wojtekz.keydatacomparer.KeyDataComparer</mainClass>
+              						<manifestEntries>
+										<Multi-Release>true</Multi-Release>
+									</manifestEntries>
             					</transformer>
           					</transformers>
         				</configuration>
