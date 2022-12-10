@@ -53,7 +53,7 @@ public class KeyDataComparer {
      * @param args the command line arguments: config file name and optional output file name
      */
     public static void main(String[] args) {
-        LOGG.info("Key data comparer starts");
+        LOGG.debug("Key data comparer starts");
 
         if (args.length != 1 && args.length != 2) {
             LOGG.fatal("The parameter is the name of the file with the tables to be compared (xml format) and, optionally, the name of the report file.");
@@ -86,6 +86,8 @@ public class KeyDataComparer {
             
             porownajIZapisz(obspli);
             
+            LOGG.info("Results saved in file " + outputFile);
+
         } catch (SQLException ex) {
             LOGG.error("SQLException !! ", ex);
         } catch (IOException ex) {
@@ -97,7 +99,7 @@ public class KeyDataComparer {
         } catch (Exception ex) {
             LOGG.error("Wrong error: ", ex);
         } finally {
-            LOGG.info("Key data comparer ends");
+            LOGG.debug("Key data comparer ends");
         }
 
         // closing the log manager

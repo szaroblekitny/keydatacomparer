@@ -134,9 +134,8 @@ public class ObsluzPliki {
                     }
                     nodeList = elm.getElementsByTagName("name");
                     this.sourcedatabase = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("sourcedatabase: " + this.sourcedatabase);
-                    }
+                    LOGG.info("Source database: " + this.sourcedatabase);
+
                     nodeList = elm.getElementsByTagName("username");
                     this.sourceusername = nodeList.item(0).getChildNodes().item(0).getNodeValue();
                     if (LOGG.isDebugEnabled()) {
@@ -172,9 +171,8 @@ public class ObsluzPliki {
                     }
                     nodeList = elm.getElementsByTagName("name");
                     this.compdatabase = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("compdatabase: " + this.compdatabase);
-                    }
+                    LOGG.info("Compared database: " + this.compdatabase);
+
                     nodeList = elm.getElementsByTagName("username");
                     this.compusername = nodeList.item(0).getChildNodes().item(0).getNodeValue();
                     if (LOGG.isDebugEnabled()) {

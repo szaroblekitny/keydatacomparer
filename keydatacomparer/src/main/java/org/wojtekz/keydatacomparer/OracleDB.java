@@ -38,11 +38,15 @@ public class OracleDB extends BazaDanych {
             String haslo) {
         super(nazwaBazy, nazwaHosta, numerPortu, schemat, haslo);
 
-        LOGG.info("database " + database);
+        if (LOGG.isDebugEnabled()) {
+        	LOGG.debug("database " + database);
+        }
         LOGG.info("hostname " + hostname);
         LOGG.info("portnumber " + portnumber);
         LOGG.info("username " + username);
-        LOGG.info("userpassword " + userpassword);
+        if (LOGG.isDebugEnabled()) {
+        	LOGG.debug("userpassword " + userpassword);
+        }
     }
 
     @Override
@@ -60,16 +64,16 @@ public class OracleDB extends BazaDanych {
         ods.setURL(this.connectUrl);
         dbconnection = ods.getConnection();
 
-        LOGG.info("There is a connection to " + this.database);
+        if (LOGG.isDebugEnabled()) {
+        	LOGG.debug("There is a connection to " + this.database);
+        }
 
         return getDbconnection();
     }
 
     @Override
     public void addPrimaryKey(Tabela tabelka) {
-    	if (LOGG.isDebugEnabled()) {
-    		LOGG.debug("OracleDB addDatabaseTable: " + tabelka.getNazwaTabeli());
-    	}
+    	LOGG.info("Primary key for table: " + tabelka.getNazwaTabeli());
         List<String> kluGlu = new ArrayList<>();  // klucz główny
         String poleKlucza;
 
@@ -93,9 +97,7 @@ public class OracleDB extends BazaDanych {
             		poleKlucza = result.getString(1);
             		if (poleKlucza != null) {
             			if (kluGlu.add(poleKlucza)) {
-            				if (LOGG.isDebugEnabled()) {
-            					LOGG.debug("Field added to key " + poleKlucza);
-	                    	}
+            				LOGG.info("Field added to key: " + poleKlucza);
 	                    } else {
 	                    	LOGG.warn("Adding field to key failed");
 	                    }
