@@ -54,7 +54,7 @@ public abstract class BazaDanych {
      * @param schemat user name
      * @param haslo user password
      */
-    public BazaDanych(String nazwaBazy,
+    protected BazaDanych(String nazwaBazy,
                       String nazwaHosta,
                       int numerPortu,
                       String schemat,
