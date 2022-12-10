@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,17 +32,19 @@ public class SprawdzPlikXML {
 	
 	public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 	
-	private DocumentBuilderFactory docFactory;
 	private SchemaFactory factory;
 	private ErrorHandler errHandler;
 	private DocumentBuilder dBuilder;
 	
 	public SprawdzPlikXML() throws ParserConfigurationException {
-		docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		docFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+		docFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         docFactory.setNamespaceAware(true);
-        dBuilder = docFactory.newDocumentBuilder();
         
+        dBuilder = docFactory.newDocumentBuilder();
         factory = SchemaFactory.newInstance(W3C_XML_SCHEMA);
+        
 		// próbuję złapać błędy w ErrorHandler
         errHandler = new DefaultHandler();
         factory.setErrorHandler(errHandler);
@@ -60,8 +63,8 @@ public class SprawdzPlikXML {
 			throws IOException, ParserConfigurationException, SAXException {
 		
 		if (!plikXML.exists() || xsdSchemaStream == null) {
-            logg.error("Szukam " + plikXML.getName() + " " + plikXML.exists());
-            throw new IOException("brak upragnionych plików");
+            logg.error("File missing: " + plikXML.getName());
+            throw new IOException("No schema or XML file");
         }
 
 		Document docxml = dBuilder.parse(plikXML);
