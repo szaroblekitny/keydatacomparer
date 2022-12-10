@@ -57,6 +57,9 @@ public class StringResultSet implements ResultSet {
 	
 	private String[][] resultSet;
 	private int ii = BEFORE_FIRST_ROW;
+	private SQLWarning warning;
+	private int fetchDirection;
+	private int fetchSize;
 	
 	public StringResultSet(String[][] dane) throws SQLException {
 		LOGG.debug("StringResultSet constructor");
@@ -282,12 +285,12 @@ public class StringResultSet implements ResultSet {
 
 	@Override
 	public SQLWarning getWarnings() throws SQLException {
-		return null;
+		return warning;
 	}
 
 	@Override
 	public void clearWarnings() throws SQLException {
-		
+		warning = null;
 	}
 
 	@Override
@@ -417,22 +420,22 @@ public class StringResultSet implements ResultSet {
 
 	@Override
 	public void setFetchDirection(int direction) throws SQLException {
-		
+		fetchDirection = direction;
 	}
 
 	@Override
 	public int getFetchDirection() throws SQLException {
-		return ResultSet.FETCH_FORWARD;
+		return fetchDirection;
 	}
 
 	@Override
 	public void setFetchSize(int rows) throws SQLException {
-		
+		fetchSize = rows;
 	}
 
 	@Override
 	public int getFetchSize() throws SQLException {
-		return 0;
+		return fetchSize;
 	}
 
 	@Override
