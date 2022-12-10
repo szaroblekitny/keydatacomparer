@@ -101,6 +101,22 @@
 				</configuration>
 			</plugin>
 
+			<!-- Sonar i raporty dla niego -->
+			<!-- NXN mvn clean package spotbugs:spotbugs pmd:pmd checkstyle:checkstyle sonar:sonar -->
+			<!-- NXN mvn clean package spotbugs:spotbugs jacoco:report pmd:pmd sonar:sonar -->
+			<!-- mvn clean package pmd:pmd sonar:sonar -->
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.6.0.1398</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.13.0</version>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
