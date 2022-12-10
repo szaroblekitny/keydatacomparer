@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class DaneTestowe {
-	
+
 	public static File tworzPlikTestowyXML() throws IOException {
 		String nazwaPliku = UUID.randomUUID().toString() + ".xml";
 		File testFile = new File(nazwaPliku);
-		String zawartosc = "<keydatacomparer>                      \n" +
+		String zawartosc =
+				"<keydatacomparer>                                 \n" +
 				"    <databases>                                   \n" +
 				"        <sourcedatabase>                          \n" +
 				"          <host>localhost</host>                  \n" +
@@ -34,14 +35,15 @@ public class DaneTestowe {
 				"        <table>CONFIGURACJA</table>               \n" +
 				"        <table>RECONFIGURACJA</table>             \n" +
 				"    </tables>                                     \n" +
-				"    <logging file=\"log4j.xml\" />                \n" +
 				"</keydatacomparer>                                \n";
 		FileWriter fileWritter = new FileWriter(testFile.getName());
-        BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-        bufferWritter.write(zawartosc);
-        bufferWritter.close();
+
+		try (BufferedWriter bufferWritter = new BufferedWriter(fileWritter)) {
+			bufferWritter.write(zawartosc);
+		}
+
         fileWritter.close();
-        
+
         return testFile;
 	}
 

@@ -112,40 +112,43 @@ public class KeyDataComparer {
      * @throws SQLException
      */
     private static void porownajIZapisz(ObsluzPliki obslugaPlikow) throws IOException, SQLException {
-    	FileWriter zapisywacz = new FileWriter(outputFile); 
-        zapisywacz.write("Databases to compare:\n");
-        zapisywacz.write("Source: " + bazaWzorcowa.getDatabase() +
-                    "/" + bazaWzorcowa.getUsername() + "\n");
-        zapisywacz.write("Compared: " + bazaPorownywana.getDatabase() + 
-                    "/" + bazaPorownywana.getUsername() + "\n");
-            
-        Connection bwzorConn = bazaWzorcowa.databaseConnection();
-        Connection bporowConn = bazaPorownywana.databaseConnection();
+    	try (FileWriter zapisywacz = new FileWriter(outputFile)) {
+	        zapisywacz.write("Databases to compare:\n");
+	        zapisywacz.write("Source: " + bazaWzorcowa.getDatabase() +
+	                    "/" + bazaWzorcowa.getUsername() + "\n");
+	        zapisywacz.write("Compared: " + bazaPorownywana.getDatabase() +
+	                    "/" + bazaPorownywana.getUsername() + "\n");
 
-        if (LOGG.isTraceEnabled()) {
-            LOGG.trace("Source connection is valid: " + bwzorConn.isValid(10));
-            LOGG.trace("Compared connection is valid: " + bporowConn.isValid(11));
-        }
-        Porownywacz por = new Porownywacz(zapisywacz);
-        por.porownuj(bazaWzorcowa, bazaPorownywana, obslugaPlikow.getNazwyTabel());
-            
-        zapisywacz.write("======================================================\n");
-        zapisywacz.write("**** THE END OF COMPARISON ****\n");
-        zapisywacz.close();
+	        Connection bwzorConn = bazaWzorcowa.databaseConnection();
+	        Connection bporowConn = bazaPorownywana.databaseConnection();
 
-        if (bwzorConn != null) {
-            bwzorConn.close();
-            if (bwzorConn.isClosed()) {
-            	LOGG.debug("Source connection is closed");
-            }
-        }
-            
-        if (bporowConn != null) {
-            bporowConn.close();
-            if (bporowConn.isClosed()) {
-            	LOGG.debug("Compare connection is closed");
-            }
-        }
-        
+	        if (LOGG.isTraceEnabled()) {
+	            LOGG.trace("Source connection is valid: " + bwzorConn.isValid(10));
+	            LOGG.trace("Compared connection is valid: " + bporowConn.isValid(11));
+	        }
+	        Porownywacz por = new Porownywacz(zapisywacz);
+	        por.porownuj(bazaWzorcowa, bazaPorownywana, obslugaPlikow.getNazwyTabel());
+
+	        zapisywacz.write("======================================================\n");
+	        zapisywacz.write("**** THE END OF COMPARISON ****\n");
+	        zapisywacz.close();
+
+
+	        if (bwzorConn != null) {
+	            bwzorConn.close();
+	            if (bwzorConn.isClosed()) {
+	            	LOGG.debug("Source connection is closed");
+	            }
+	        }
+
+	        if (bporowConn != null) {
+	            bporowConn.close();
+	            if (bporowConn.isClosed()) {
+	            	LOGG.debug("Compare connection is closed");
+	            }
+	        }
+
+    	}
+ 
     }
 }

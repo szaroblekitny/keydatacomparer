@@ -71,8 +71,6 @@ public class OracleDB extends BazaDanych {
     		LOGG.debug("OracleDB addDatabaseTable: " + tabelka.getNazwaTabeli());
     	}
         List<String> kluGlu = new ArrayList<>();  // klucz główny
-        PreparedStatement prepState;
-        ResultSet result;
         String poleKlucza;
 
         try {
@@ -87,24 +85,26 @@ public class OracleDB extends BazaDanych {
             if (LOGG.isDebugEnabled()) {
             	LOGG.debug("addPrimaryKey SQL: " + sqlStatement);
             }
-            prepState = getDbconnection().prepareStatement(sqlStatement);
-            result = prepState.executeQuery();
 
-            while (result.next()) {
-                poleKlucza = result.getString(1);
-                if (poleKlucza != null) {
-                    if (kluGlu.add(poleKlucza)) {
-                    	if (LOGG.isDebugEnabled()) {
-                    		LOGG.debug("Field added to key " + poleKlucza);
-                    	}
-                    } else {
-                        LOGG.warn("Adding field to key failed");
-                    }
-                }
+            try (PreparedStatement prepState = getDbconnection().prepareStatement(sqlStatement);
+            		ResultSet result = prepState.executeQuery()) {
+
+            	while (result.next()) {
+            		poleKlucza = result.getString(1);
+            		if (poleKlucza != null) {
+            			if (kluGlu.add(poleKlucza)) {
+            				if (LOGG.isDebugEnabled()) {
+            					LOGG.debug("Field added to key " + poleKlucza);
+	                    	}
+	                    } else {
+	                    	LOGG.warn("Adding field to key failed");
+	                    }
+	                }
+	            }
             }
 
         } catch (SQLException ex) {
-            LOGG.error("addPrimaryKey SQL error: " + ex.getMessage());
+        	LOGG.error("addPrimaryKey SQL error: " + ex.getMessage());
         }
 
         tabelka.setKluczGlowny(kluGlu);
@@ -116,8 +116,6 @@ public class OracleDB extends BazaDanych {
     		LOGG.debug("OracleDB getFields for: " + tabelka.getNazwaTabeli());
     	}
     	
-        PreparedStatement prepState;
-        ResultSet result;
         String kolumna;
         String typDanych;
         int precyzja;
@@ -135,16 +133,18 @@ public class OracleDB extends BazaDanych {
             if (LOGG.isDebugEnabled()) {
             	LOGG.debug("getFields SQL: " + sqlStatement);
             }
-            prepState = getDbconnection().prepareStatement(sqlStatement);
-            result = prepState.executeQuery();
+            
+            try (PreparedStatement prepState = getDbconnection().prepareStatement(sqlStatement);
+            		ResultSet result = prepState.executeQuery()) {
 
-            while (result.next()) {
-                kolumna = result.getString(1);
-                typDanych = result.getString(2);
-                precyzja = result.getInt(3);
-                skala = result.getInt(4);
-                szer_pola = result.getInt(5);
-                tabelka.dodajKolumne(kolumna, typDanych, precyzja, skala, szer_pola);
+	            while (result.next()) {
+	                kolumna = result.getString(1);
+	                typDanych = result.getString(2);
+	                precyzja = result.getInt(3);
+	                skala = result.getInt(4);
+	                szer_pola = result.getInt(5);
+	                tabelka.dodajKolumne(kolumna, typDanych, precyzja, skala, szer_pola);
+	            }
             }
 
         } catch (SQLException ex) {
@@ -164,8 +164,6 @@ public class OracleDB extends BazaDanych {
     	LOGG.debug("OracleDB daneKluczowe for: " + tabelka.getNazwaTabeli());
 
         SortedSet<Klucz> daneKluczy = new TreeSet<>();
-        PreparedStatement prepState;
-        ResultSet result;
         String sqlStatement;
         
         List<String> rekord = new ArrayList<>();
@@ -175,30 +173,23 @@ public class OracleDB extends BazaDanych {
 
         List<String> kluczyk = tabelka.getKluczGlowny();
 
+        // najpierw liczymy ile rekordów ma tabelka
+        sqlStatement = "select count(*) from " + tabelka.getNazwaTabeli();
         try {
-            
-            // najpierw liczymy ile rekordów ma tabelka
-            sqlStatement = "select count(*) from " + tabelka.getNazwaTabeli();
-            prepState = getDbconnection().prepareStatement(sqlStatement);
-            
-            try {
-            	result = prepState.executeQuery();
-            	if(!result.next()) {
+            try (PreparedStatement statementCount = getDbconnection().prepareStatement(sqlStatement);
+            		ResultSet resultCount = statementCount.executeQuery()) {
+            	if(!resultCount.next()) {
             		LOGG.error("Records cannot be counted");
             	}
-            	ileRekordow = result.getInt(1);
+            	ileRekordow = resultCount.getInt(1);
             	if (LOGG.isDebugEnabled()) {
             		LOGG.debug("Number of records (" + getSchemaAndDatabaseName() + "/"
             			+ tabelka.getNazwaTabeli() +"): " + ileRekordow);
             	}
-            	result.close();
-            	
             } catch (SQLException sex) {
             	ileRekordow = 0;
-            } finally {
-            	prepState.close();
             }
-            
+
             if (ileRekordow > 0) {
 				// przechodzimy do wypełnienia struktury danych zawierającej wrtości kluczy głównych
 				sqlStatement = "select ";
@@ -214,36 +205,38 @@ public class OracleDB extends BazaDanych {
 					sqlStatement += kluczyk.get(ii) + ", ";
 				}
 				// ucinamy końcowy przecinek
-				sqlStatement = sqlStatement.substring(0,
-						sqlStatement.length() - 2);
+				sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
 				if (LOGG.isDebugEnabled()) {
 					LOGG.debug("daneKluczowe SQL: " + sqlStatement);
 				}
-				prepState = getDbconnection().prepareStatement(sqlStatement);
-				result = prepState.executeQuery();
-				
-				while (result.next()) {
-					daneRekordu = "";
-					// numerujemy od jednego, JDBC ma inną pragmatykę...
-					for (int ii = 1; ii <= kluczyk.size(); ii++) {
-						danePola = result.getString(ii);
-						rekord.add(danePola);
-						daneRekordu += danePola + " ";
-					}
-					if (LOGG.isTraceEnabled()) {
-						LOGG.trace("Rec: " + daneRekordu);
-					}
 
-					if (!daneKluczy.add(new Klucz(rekord)) && LOGG.isDebugEnabled()) {
-						LOGG.debug("Failed to add the data of the key");
+				try (PreparedStatement prepState = getDbconnection().prepareStatement(sqlStatement);
+						ResultSet result = prepState.executeQuery()) {
+
+					while (result.next()) {
+						daneRekordu = "";
+						// numerujemy od jednego, JDBC ma inną pragmatykę...
+						for (int ii = 1; ii <= kluczyk.size(); ii++) {
+							danePola = result.getString(ii);
+							rekord.add(danePola);
+							daneRekordu += danePola + " ";
+						}
+
+						if (LOGG.isTraceEnabled()) {
+							LOGG.trace("Rec: " + daneRekordu);
+						}
+	
+						if (!daneKluczy.add(new Klucz(rekord)) && LOGG.isDebugEnabled()) {
+							LOGG.debug("Failed to add the data of the key");
+						}
+						rekord.clear();
+					} // while (result.next())
+
+					if (LOGG.isDebugEnabled()) {
+						LOGG.debug("Size of daneKluczy set: " + daneKluczy.size());
 					}
-					rekord.clear();
-				} // while (result.next())
-				
-				if (LOGG.isDebugEnabled()) {
-					LOGG.debug("Size of daneKluczy set: " + daneKluczy.size());
 				}
-			}
+			}  // if (ileRekordow > 0)
 
         } catch (SQLException ex) {
             LOGG.error("SQL error (daneKluczowe): " + ex.getMessage());

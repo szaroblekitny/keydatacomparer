@@ -265,10 +265,6 @@ public class Porownywacz {
             Connection wzorzecConn,
             Connection kopiaConn) throws SQLException, IOException {
 
-        PreparedStatement prepStWzor;
-        ResultSet resultWzor;
-        PreparedStatement prepStKopia;
-        ResultSet resultKopia;
         String sqlStatement;
 
         zapisywacz.write("\nDifferent records\n");
@@ -279,52 +275,56 @@ public class Porownywacz {
                 LOGG.trace("sqlStatement: >" + sqlStatement + "<");
             }
             
-            prepStWzor = wzorzecConn.prepareStatement(sqlStatement);
-            resultWzor = prepStWzor.executeQuery();
-            prepStKopia = kopiaConn.prepareStatement(sqlStatement);
-            resultKopia = prepStKopia.executeQuery();
-            ResultSetMetaData rsmd = resultWzor.getMetaData();
+            try (
+            		PreparedStatement prepStWzor = wzorzecConn.prepareStatement(sqlStatement);
+            		ResultSet resultWzor = prepStWzor.executeQuery();
+            		PreparedStatement prepStKopia = kopiaConn.prepareStatement(sqlStatement);
+            		ResultSet resultKopia = prepStKopia.executeQuery()) {
             
-            if (LOGG.isDebugEnabled()) {
-            	LOGG.debug("Number of columns in the table " + tabela.getNazwaTabeli() + ": " + rsmd.getColumnCount());
-            }
+	            ResultSetMetaData rsmd = resultWzor.getMetaData();
 
-            boolean saRozne;
-            String wartWzor;
-            String wartKopii;
+	            if (LOGG.isDebugEnabled()) {
+	            	LOGG.debug("Number of columns in the table " + tabela.getNazwaTabeli() + ": " + rsmd.getColumnCount());
+	            }
 
-            // teoretycznie powinien byc jeden rekord
-            while (resultWzor.next()) {
-                if (!resultKopia.next()) {
-                    throw new SQLException("The number of records in the copy is different than in the source");
-                }
+	            boolean saRozne;
+	            String wartWzor;
+	            String wartKopii;
 
-                saRozne = false;
-                
-                for (int ii = 1; ii <= rsmd.getColumnCount(); ii++) {
-                	if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("Column " + ii);
-                    }
-                    wartWzor = resultWzor.getString(ii);
-                    wartKopii = resultKopia.getString(ii);
-                    
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("In the source: " + wartWzor + " in the compare data: " + wartKopii);
-                    }
-                    
-                    if (wartWzor == null ? wartKopii != null : !wartWzor.equals(wartKopii)) {
-                        saRozne = true;
-                        break;
-                    }
-                }
+	            // teoretycznie powinien byc jeden rekord
+	            while (resultWzor.next()) {
+	            	if (!resultKopia.next()) {
+	            		throw new SQLException("The number of records in the copy is different than in the source");
+	            	}
 
-                if (saRozne) {
-                    zapisywacz.write(" Source data: ");
-                    wypiszDaneRekordow(resultWzor);
+	                saRozne = false;
 
-                    zapisywacz.write("Compare data: ");
-                    wypiszDaneRekordow(resultKopia);
-                }
+	                for (int ii = 1; ii <= rsmd.getColumnCount(); ii++) {
+	                	if (LOGG.isDebugEnabled()) {
+	                    	LOGG.debug("Column " + ii);
+	                    }
+	                    wartWzor = resultWzor.getString(ii);
+	                    wartKopii = resultKopia.getString(ii);
+
+	                    if (LOGG.isDebugEnabled()) {
+	                    	LOGG.debug("In the source: " + wartWzor + " in the compare data: " + wartKopii);
+	                    }
+
+	                    if (wartWzor == null ? wartKopii != null : !wartWzor.equals(wartKopii)) {
+	                        saRozne = true;
+	                        break;
+	                    }
+	                }
+
+	                if (saRozne) {
+	                    zapisywacz.write(" Source data: ");
+	                    wypiszDaneRekordow(resultWzor);
+
+	                    zapisywacz.write("Compare data: ");
+	                    wypiszDaneRekordow(resultKopia);
+	                }
+
+	            }   // while (resultWzor.next())
             }
             zapisywacz.write("\n");
 
