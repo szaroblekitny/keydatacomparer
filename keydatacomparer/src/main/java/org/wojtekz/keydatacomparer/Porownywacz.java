@@ -20,6 +20,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -84,12 +85,7 @@ public class Porownywacz {
             wzorzec.addPrimaryKey(tabela);
             
             if (LOGG.isDebugEnabled()) {
-                LOGG.debug("Primary key for table " + tabela.getNazwaTabeli() + ":");
-                if (tabela.getKluczGlowny().isEmpty()) {
-                	LOGG.debug("== No primary key ==");
-                } else {
-                	LOGG.debug(tabela.getKluczGlowny().toString());
-                }
+            	logKluczGlowny();
             }
 
             zapisywacz.write("Comparison for table " + tabela.getNazwaTabeli() + "\n");
@@ -100,30 +96,18 @@ public class Porownywacz {
             wzorzec.getFields(tabela);
 
             List<KolumnaTabeli> polaTabeli = tabela.getPolaTabeli();
-
-            if (LOGG.isDebugEnabled()) {
-                for (int ii = 0; ii < polaTabeli.size(); ii++) {
-                    LOGG.debug("Table " + tabela.getNazwaTabeli() + " columns: "
-                            + polaTabeli.get(ii).getNazwaKolumnny()
-                            + " " + polaTabeli.get(ii).getTypDanych()
-                            + " " + polaTabeli.get(ii).getPrecyzja()
-                            + " " + polaTabeli.get(ii).getSkala());
-                }
-            }
+            
+            logPolTabeli(polaTabeli);
 
             // dla ułatwienia analizy wypisujemy pola tabeli 
             zapisywacz.write("Table columns:\n");
             String wypPola = "";
-            for (int ii = 0; ii < polaTabeli.size(); ii++) {
-                wypPola += polaTabeli.get(ii).getNazwaKolumnny() + "|";
+            
+            for (KolumnaTabeli kolumna : polaTabeli) {
+            	wypPola = wypPola.concat(kolumna.getNazwaKolumnny()).concat("|");
             }
             
-            if (wypPola.length() > 0) {
-            	wypPola = wypPola.substring(0, wypPola.length() - 1);
-            	zapisywacz.write(wypPola + "\n");
-            } else {
-            	zapisywacz.write("No columns in the table\n");
-            }
+            zapiszPola(wypPola);
 
             /*
              * Dla każdej tabelki robimy selekty i łapiemy klucze główne do zbioru sortowanego (SortedSet).
@@ -132,29 +116,12 @@ public class Porownywacz {
              * różnice.
              */
             daneKluczyWzorcowych = wzorzec.daneKluczowe(tabela);
+            LOGG.debug("Source key data:");
+            logDaneKluczy(daneKluczyWzorcowych, wzorzec);
             
-            if (daneKluczyWzorcowych != null) {
-            	if (LOGG.isDebugEnabled()) {
-            		LOGG.debug("Source key data:");
-            		wyswietlDebugKluczy(daneKluczyWzorcowych);
-            	}
-            } else {
-                LOGG.warn("No primary key data for "
-                           + wzorzec.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
-            }
-
             daneKluczyPorownywanych = kopia.daneKluczowe(tabela);
-            
-           	if (daneKluczyPorownywanych != null) {
-           		if (LOGG.isDebugEnabled()) {
-           			LOGG.debug("Compared key data:");
-           			wyswietlDebugKluczy(daneKluczyPorownywanych);
-           		}
-           	}
-           	else {
-           		LOGG.warn("No primary key data for "
-                       + kopia.getSchemaAndDatabaseName() + "/" + tabela.getNazwaTabeli());
-            }
+            LOGG.debug("Compared key data:");
+            logDaneKluczy(daneKluczyPorownywanych, kopia);
 
             LOGG.debug("Difference for source data");
             // metoda addAll zwraca true, jeśli dodawana kolekcja zmienia wielkość zbioru
@@ -212,20 +179,68 @@ public class Porownywacz {
     }
 
     /////////  privates  ////////////////////////////////////////////////////////////////////
-    private void wyswietlDebugKluczy(SortedSet<Klucz> klucze) {
+
+    private void zapiszPola(String pola) throws IOException {
+    	if (pola.length() > 0) {
+    		pola = pola.substring(0, pola.length() - 1);
+        	zapisywacz.write(pola + "\n");
+        } else {
+        	zapisywacz.write("No columns in the table\n");
+        }
+    }
+
+    //--------------------------------------------------------------------------------------
+    private void logDaneKluczy(Set<Klucz> setKluczy, BazaDanych baza) {
+    	if (setKluczy != null) {
+        	if (LOGG.isDebugEnabled()) {
+        		wyswietlDebugKluczy(setKluczy);
+        	}
+        } else {
+            LOGG.warn("No primary key data for {}/{}", baza.getSchemaAndDatabaseName(), tabela.getNazwaTabeli());
+        }
+    }
+
+    //---------------------------------------------------------------------------------------
+    private void logKluczGlowny() {
+    	LOGG.debug("Primary key for table " + tabela.getNazwaTabeli() + ":");
+        if (tabela.getKluczGlowny().isEmpty()) {
+        	LOGG.debug("== No primary key ==");
+        } else {
+        	LOGG.debug(tabela.getKluczGlowny().toString());
+        }
+    }
+
+    // --------------------------------------------------------------------------------------
+    private void logPolTabeli(List<KolumnaTabeli> polaTabeli) {
+    	for(KolumnaTabeli kol : polaTabeli) {
+    		LOGG.debug("Table {} has columns: {} {} {} {}",
+        			tabela.getNazwaTabeli(),
+        			kol.getNazwaKolumnny(),
+        			kol.getTypDanych(),
+        			kol.getPrecyzja(),
+        			kol.getSkala()
+                );
+    	}
+    }
+
+    //---------------------------------------------------------------------------------------
+
+    private void wyswietlDebugKluczy(Set<Klucz> klucze) {
 		if (klucze != null) {
-			String str = "";
-			if (LOGG.isDebugEnabled()) {
-				LOGG.debug("Size of the key data: " + klucze.size());
-			}
-			for (Klucz iterator : klucze) {
-				for (int ii = 0; ii < iterator.getDlugosc(); ii++) {
-					str += iterator.getLista().get(ii) + " ";
+			LOGG.debug("Size of the key data: {}", klucze.size());
+
+			if (LOGG.isTraceEnabled()) {
+				List<String> polaKlucza;
+				String str = "";
+				for (Klucz klucz : klucze) {
+					polaKlucza = klucz.getLista();
+					for (String pole: polaKlucza) {
+						str = str.concat(pole).concat(" ");
+					}
+
+					LOGG.trace("Key fields: {}", str);
+					str = "";
 				}
-				if (LOGG.isTraceEnabled()) {
-					LOGG.trace(str);
-				}
-				str = "";
 			}
 		} else {
 			LOGG.warn("SortedSet klucze is null!");
@@ -260,7 +275,32 @@ public class Porownywacz {
         }
     }
 
+    //---------------------------------------------------------------------------------------
+
+    private boolean saRozne(int ileKolumn, ResultSet resultWzor, ResultSet resultKopia)
+    		throws SQLException {
+    	boolean rozne = false;
+    	String wartWzor;
+        String wartKopii;
+
+        for (int ii = 1; ii <= ileKolumn; ii++) {
+            LOGG.debug("Column {}", ii);
+            wartWzor = resultWzor.getString(ii);
+            wartKopii = resultKopia.getString(ii);
+
+            LOGG.debug("In the source: {} in the compare data: {}", wartWzor, wartKopii);
+
+            if (wartWzor == null ? wartKopii != null : !wartWzor.equals(wartKopii)) {
+                rozne = true;
+                break;
+            }
+        }
+
+    	return rozne;
+    }
+
     // --------------------------------------------------------------------------------------
+
     private void pokazRozneRekordy(SortedSet<Klucz> wspolne,
             Connection wzorzecConn,
             Connection kopiaConn) throws SQLException, IOException {
@@ -271,9 +311,7 @@ public class Porownywacz {
         for (Klucz iter : wspolne) {
             sqlStatement = BazaDanych.tworzenieSelecta(tabela, iter);
             
-            if (LOGG.isTraceEnabled()) {
-                LOGG.trace("sqlStatement: >" + sqlStatement + "<");
-            }
+            LOGG.trace("sqlStatement: >{}<", sqlStatement);
             
             try (
             		PreparedStatement prepStWzor = wzorzecConn.prepareStatement(sqlStatement);
@@ -282,41 +320,18 @@ public class Porownywacz {
             		ResultSet resultKopia = prepStKopia.executeQuery()) {
             
 	            ResultSetMetaData rsmd = resultWzor.getMetaData();
+	            LOGG.debug("Number of columns in the table {}: {}", tabela.getNazwaTabeli(), rsmd.getColumnCount());
 
-	            if (LOGG.isDebugEnabled()) {
-	            	LOGG.debug("Number of columns in the table " + tabela.getNazwaTabeli() + ": " + rsmd.getColumnCount());
-	            }
-
-	            boolean saRozne;
-	            String wartWzor;
-	            String wartKopii;
-
+	            boolean rozne;
 	            // teoretycznie powinien byc jeden rekord
 	            while (resultWzor.next()) {
 	            	if (!resultKopia.next()) {
 	            		throw new SQLException("The number of records in the copy is different than in the source");
 	            	}
 
-	                saRozne = false;
+	                rozne = saRozne(rsmd.getColumnCount(), resultWzor, resultKopia);
 
-	                for (int ii = 1; ii <= rsmd.getColumnCount(); ii++) {
-	                	if (LOGG.isDebugEnabled()) {
-	                    	LOGG.debug("Column " + ii);
-	                    }
-	                    wartWzor = resultWzor.getString(ii);
-	                    wartKopii = resultKopia.getString(ii);
-
-	                    if (LOGG.isDebugEnabled()) {
-	                    	LOGG.debug("In the source: " + wartWzor + " in the compare data: " + wartKopii);
-	                    }
-
-	                    if (wartWzor == null ? wartKopii != null : !wartWzor.equals(wartKopii)) {
-	                        saRozne = true;
-	                        break;
-	                    }
-	                }
-
-	                if (saRozne) {
+	                if (rozne) {
 	                    zapisywacz.write(" Source data: ");
 	                    wypiszDaneRekordow(resultWzor);
 
@@ -333,7 +348,8 @@ public class Porownywacz {
     }
 
     // --------------------------------------------------------------------------------------
-    private void wypiszDaneRekordow(ResultSet result) throws IOException, SQLException {
+    private void wypiszDaneRekordow(ResultSet result)
+    		throws IOException, SQLException {
     	
         String linia = "";
         String pole;
@@ -376,9 +392,8 @@ public class Porownywacz {
 
         linia = linia.substring(0, linia.length() - 1);
         linia = linia.trim();
-        if (LOGG.isTraceEnabled()) {
-        	LOGG.trace("Line: " + linia);
-        }
+
+        LOGG.debug("Data line: {}", linia);
         zapisywacz.write(linia + "\n");
     }
 
@@ -392,6 +407,7 @@ public class Porownywacz {
         return String.format("%1$-" + n + "s", str);
     }
 
+    // --------------------------------------------------------------------------------------
     private String padLeft(String str, int n) {
     	if (LOGG.isTraceEnabled()) {
         	LOGG.trace("format: " + "%1$" + n + "s **>" + str);
