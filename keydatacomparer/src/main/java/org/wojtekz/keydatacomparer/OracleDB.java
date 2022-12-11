@@ -166,14 +166,9 @@ public class OracleDB extends BazaDanych {
     	LOGG.debug("OracleDB daneKluczowe for: " + tabelka.getNazwaTabeli());
 
         SortedSet<Klucz> daneKluczy = new TreeSet<>();
-        String sqlStatement;
-        
-        List<String> rekord = new ArrayList<>();
-        String danePola;
-        String daneRekordu;
-        int ileRekordow = 0;
-
         List<String> kluczyk = tabelka.getKluczGlowny();
+        String sqlStatement;
+        int ileRekordow = 0;
 
         // najpierw liczymy ile rekordów ma tabelka
         sqlStatement = "select count(*) from " + tabelka.getNazwaTabeli();
@@ -184,10 +179,7 @@ public class OracleDB extends BazaDanych {
             		LOGG.error("Records cannot be counted");
             	}
             	ileRekordow = resultCount.getInt(1);
-            	if (LOGG.isDebugEnabled()) {
-            		LOGG.debug("Number of records (" + getSchemaAndDatabaseName() + "/"
-            			+ tabelka.getNazwaTabeli() +"): " + ileRekordow);
-            	}
+            	LOGG.debug("Number of records ({}/{}): {}", getSchemaAndDatabaseName(), tabelka.getNazwaTabeli(), ileRekordow);
             } catch (SQLException sex) {
             	ileRekordow = 0;
             }
@@ -199,8 +191,7 @@ public class OracleDB extends BazaDanych {
 					sqlStatement += kluczyk.get(ii) + ", ";
 				}
 				// ucinamy końcowy przecinek
-				sqlStatement = sqlStatement.substring(0,
-						sqlStatement.length() - 2);
+				sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
 				sqlStatement += " from " + tabelka.getNazwaTabeli() + " "
 						+ "order by ";
 				for (int ii = 0; ii < kluczyk.size(); ii++) {
@@ -208,36 +199,10 @@ public class OracleDB extends BazaDanych {
 				}
 				// ucinamy końcowy przecinek
 				sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
-				if (LOGG.isDebugEnabled()) {
-					LOGG.debug("daneKluczowe SQL: " + sqlStatement);
-				}
+				LOGG.debug("daneKluczowe SQL: {}", sqlStatement);
 
-				try (PreparedStatement prepState = getDbconnection().prepareStatement(sqlStatement);
-						ResultSet result = prepState.executeQuery()) {
-
-					while (result.next()) {
-						daneRekordu = "";
-						// numerujemy od jednego, JDBC ma inną pragmatykę...
-						for (int ii = 1; ii <= kluczyk.size(); ii++) {
-							danePola = result.getString(ii);
-							rekord.add(danePola);
-							daneRekordu += danePola + " ";
-						}
-
-						if (LOGG.isTraceEnabled()) {
-							LOGG.trace("Rec: " + daneRekordu);
-						}
-	
-						if (!daneKluczy.add(new Klucz(rekord)) && LOGG.isDebugEnabled()) {
-							LOGG.debug("Failed to add the data of the key");
-						}
-						rekord.clear();
-					} // while (result.next())
-
-					if (LOGG.isDebugEnabled()) {
-						LOGG.debug("Size of daneKluczy set: " + daneKluczy.size());
-					}
-				}
+				// dodaje dane kluczy głównych wzięte z selecta
+				dodajKlucze(daneKluczy, sqlStatement, kluczyk.size());
 			}  // if (ileRekordow > 0)
 
         } catch (SQLException ex) {
@@ -245,5 +210,39 @@ public class OracleDB extends BazaDanych {
         }
 
         return daneKluczy;
+    }
+
+    // // // private  --------------------------------------------------------------
+
+    private void dodajKlucze(SortedSet<Klucz> daneKluczy, String sqlStatement, int wielkoscKlucza)
+    		throws SQLException {
+    	List<String> rekord = new ArrayList<>();
+        String danePola;
+        String daneRekordu;
+
+    	try (PreparedStatement prepState = getDbconnection().prepareStatement(sqlStatement);
+				ResultSet result = prepState.executeQuery()) {
+
+			while (result.next()) {
+				daneRekordu = "";
+				// numerujemy od jednego, JDBC ma inną pragmatykę...
+				for (int ii = 1; ii <= wielkoscKlucza; ii++) {
+					danePola = result.getString(ii);
+					rekord.add(danePola);
+					daneRekordu += danePola + " ";
+				}
+
+				if (LOGG.isTraceEnabled()) {
+					LOGG.trace("Rec: {}", daneRekordu);
+				}
+
+				if (!daneKluczy.add(new Klucz(rekord)) && LOGG.isDebugEnabled()) {
+					LOGG.debug("Failed to add the data of the key");
+				}
+				rekord.clear();
+			} // while (result.next())
+
+			LOGG.debug("Size of daneKluczy set: {}", daneKluczy.size());
+		}
     }
 }

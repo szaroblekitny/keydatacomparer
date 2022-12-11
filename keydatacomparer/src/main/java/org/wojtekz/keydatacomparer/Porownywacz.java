@@ -212,16 +212,18 @@ public class Porownywacz {
 
     // --------------------------------------------------------------------------------------
     private void logPolTabeli(List<KolumnaTabeli> polaTabeli) {
-    	for(KolumnaTabeli kol : polaTabeli) {
-    		LOGG.debug("Table {} has columns: {} {} {} {}",
-        			tabela.getNazwaTabeli(),
-        			kol.getNazwaKolumnny(),
-        			kol.getTypDanych(),
-        			kol.getPrecyzja(),
-        			kol.getSkala()
-                );
+    	if (LOGG.isDebugEnabled()) {
+    		for(KolumnaTabeli kol : polaTabeli) {
+    			LOGG.debug("Table {} has columns: {} {} {} {}",
+    					tabela.getNazwaTabeli(),
+    					kol.getNazwaKolumnny(),
+    					kol.getTypDanych(),
+    					kol.getPrecyzja(),
+    					kol.getSkala()
+    					);
+    		}
     	}
-    }
+	}
 
     //---------------------------------------------------------------------------------------
 
