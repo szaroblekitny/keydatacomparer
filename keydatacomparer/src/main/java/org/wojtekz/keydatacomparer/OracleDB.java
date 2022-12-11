@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Extends BazaDanych class for implementation of Oracle database.
+ * It extends the BazaDanych class by implementing support for the Oracle database.
  *
  * @author Wojciech Zaręba
  */
@@ -39,13 +39,13 @@ public class OracleDB extends BazaDanych {
         super(nazwaBazy, nazwaHosta, numerPortu, schemat, haslo);
 
         if (LOGG.isDebugEnabled()) {
-        	LOGG.debug("database " + database);
+        	LOGG.debug("database {}", database);
         }
-        LOGG.info("hostname " + hostname);
-        LOGG.info("portnumber " + portnumber);
-        LOGG.info("username " + username);
+        LOGG.info("hostname {}", hostname);
+        LOGG.info("portnumber {}", portnumber);
+        LOGG.info("username {}", username);
         if (LOGG.isDebugEnabled()) {
-        	LOGG.debug("userpassword " + userpassword);
+        	LOGG.debug("userpassword {}", userpassword);
         }
     }
 
@@ -57,7 +57,7 @@ public class OracleDB extends BazaDanych {
                 + "@//" + this.hostname + ":" + this.portnumber + "/" + this.database;
 
         if (LOGG.isDebugEnabled()) {
-        	LOGG.debug("URL: " + connectUrl);
+        	LOGG.debug("URL: {}", connectUrl);
         }
 
         OracleDataSource ods = new OracleDataSource();
@@ -65,7 +65,7 @@ public class OracleDB extends BazaDanych {
         dbconnection = ods.getConnection();
 
         if (LOGG.isDebugEnabled()) {
-        	LOGG.debug("There is a connection to " + this.database);
+        	LOGG.debug("There is a connection to {}", this.database);
         }
 
         return getDbconnection();
@@ -73,7 +73,7 @@ public class OracleDB extends BazaDanych {
 
     @Override
     public void addPrimaryKey(Tabela tabelka) {
-    	LOGG.info("Primary key for table: " + tabelka.getNazwaTabeli());
+    	LOGG.info("Primary key for table: {}", tabelka.getNazwaTabeli());
         List<String> kluGlu = new ArrayList<>();  // klucz główny
         String poleKlucza;
 
@@ -87,7 +87,7 @@ public class OracleDB extends BazaDanych {
                     + "and acc.constraint_name = alc.constraint_name "
                     + "order by acc.position";
             if (LOGG.isDebugEnabled()) {
-            	LOGG.debug("addPrimaryKey SQL: " + sqlStatement);
+            	LOGG.debug("addPrimaryKey SQL: {}", sqlStatement);
             }
 
             try (PreparedStatement prepState = getDbconnection().prepareStatement(sqlStatement);
@@ -97,7 +97,7 @@ public class OracleDB extends BazaDanych {
             		poleKlucza = result.getString(1);
             		if (poleKlucza != null) {
             			if (kluGlu.add(poleKlucza)) {
-            				LOGG.info("Field added to key: " + poleKlucza);
+            				LOGG.info("Field added to key: {}", poleKlucza);
 	                    } else {
 	                    	LOGG.warn("Adding field to key failed");
 	                    }
@@ -106,7 +106,7 @@ public class OracleDB extends BazaDanych {
             }
 
         } catch (SQLException ex) {
-        	LOGG.error("addPrimaryKey SQL error: " + ex.getMessage());
+        	LOGG.error("addPrimaryKey SQL error: {}", ex.getMessage());
         }
 
         tabelka.setKluczGlowny(kluGlu);
@@ -115,7 +115,7 @@ public class OracleDB extends BazaDanych {
     @Override
     public void getFields(Tabela tabelka) {
     	if (LOGG.isDebugEnabled()) {
-    		LOGG.debug("OracleDB getFields for: " + tabelka.getNazwaTabeli());
+    		LOGG.debug("OracleDB getFields for: {}", tabelka.getNazwaTabeli());
     	}
     	
         String kolumna;
@@ -150,7 +150,7 @@ public class OracleDB extends BazaDanych {
             }
 
         } catch (SQLException ex) {
-            LOGG.error("getFields SQL error: " + ex.getMessage());
+            LOGG.error("getFields SQL error: {}", ex.getMessage());
         }
     }
 
@@ -163,7 +163,7 @@ public class OracleDB extends BazaDanych {
      */
     @Override
     public SortedSet<Klucz> daneKluczowe(Tabela tabelka) {
-    	LOGG.debug("OracleDB daneKluczowe for: " + tabelka.getNazwaTabeli());
+    	LOGG.debug("OracleDB daneKluczowe for: {}", tabelka.getNazwaTabeli());
 
         SortedSet<Klucz> daneKluczy = new TreeSet<>();
         List<String> kluczyk = tabelka.getKluczGlowny();
@@ -206,7 +206,7 @@ public class OracleDB extends BazaDanych {
 			}  // if (ileRekordow > 0)
 
         } catch (SQLException ex) {
-            LOGG.error("SQL error (daneKluczowe): " + ex.getMessage());
+            LOGG.error("SQL error (daneKluczowe): {}", ex.getMessage());
         }
 
         return daneKluczy;

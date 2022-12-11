@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class DaneTestowe {
+	
+	private DaneTestowe() {
+	}
 
 	public static File tworzPlikTestowyXML() throws IOException {
 		String nazwaPliku = UUID.randomUUID().toString() + ".xml";

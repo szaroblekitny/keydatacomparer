@@ -134,7 +134,7 @@ public class ObsluzPliki {
         fileNodeList = docxml.getElementsByTagName("table");
         LOGG.debug("NodeList length: {}", fileNodeList.getLength());
 
-        if (fileNodeList != null && fileNodeList.getLength() > 0) {
+        if (fileNodeList.getLength() > 0) {
             for (int ii = 0; ii < fileNodeList.getLength(); ii++) {
                 Node node = fileNodeList.item(ii);
                 if (LOGG.isDebugEnabled()) {
