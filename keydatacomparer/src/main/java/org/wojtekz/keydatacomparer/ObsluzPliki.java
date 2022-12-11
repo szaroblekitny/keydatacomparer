@@ -88,9 +88,7 @@ public class ObsluzPliki {
     private void obsluga(String plik1, String plik2)
             throws IOException, SAXException, ParserConfigurationException, ClassNotFoundException {
 
-    	if (LOGG.isDebugEnabled()) {
-    		LOGG.info("obsluga --> plik1: " + plik1 + " plik2: " + plik2);
-    	}
+   		LOGG.info("obsluga --> plik1: {} plik2: {}", plik1, plik2);
 
         File plikXML = new File(plik1);
 
@@ -103,101 +101,42 @@ public class ObsluzPliki {
         SprawdzPlikXML sprawdzarka = new SprawdzPlikXML();
         sprawdzarka.sprawdzFormalnie(xsdStream, plikXML);
 
-        if (LOGG.isDebugEnabled()) {
-        	LOGG.info("file " + plikXML + " is valid");
-        }
+        LOGG.info("File {} is valid", plikXML.getName());
 
         Document docxml = sprawdzarka.zrobDocXMLZpliku(plikXML);
-
         Element xmlElem = docxml.getDocumentElement();
-        if (LOGG.isDebugEnabled()) {
-        	LOGG.debug("Root: " + xmlElem.getNodeName());
-        }
+        LOGG.debug("Root: " + xmlElem.getNodeName());
+        
         ///--- sourcedatabase
-        NodeList sourcedbNL = docxml.getElementsByTagName("sourcedatabase");
-        if (sourcedbNL != null && sourcedbNL.getLength() > 0) {
-            for (int ii = 0; ii < sourcedbNL.getLength(); ii++) {
-
-                Node node = sourcedbNL.item(ii);
-
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element elm = (Element) node;
-                    NodeList nodeList = elm.getElementsByTagName("host");
-                    this.sourcehostname = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("sourcehostname: " + this.sourcehostname);
-                    }
-                    nodeList = elm.getElementsByTagName("port");
-                    this.sourceportnumber = Integer.parseInt(nodeList.item(0).getChildNodes().item(0).getNodeValue());
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("sourceportnumber: " + this.sourceportnumber);
-                    }
-                    nodeList = elm.getElementsByTagName("name");
-                    this.sourcedatabase = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    LOGG.info("Source database: " + this.sourcedatabase);
-
-                    nodeList = elm.getElementsByTagName("username");
-                    this.sourceusername = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("sourceusername: " + this.sourceusername);
-                    }
-                    nodeList = elm.getElementsByTagName("userpassword");
-                    this.sourceuserpassword = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("sourceuserpassword: " + this.sourceuserpassword);
-                    }
-                }
-            }
-        }
+        NodeList fileNodeList = docxml.getElementsByTagName("sourcedatabase");
+        rozszyjDaneBazy(fileNodeList, true);
+        
+        LOGG.debug("sourcehostname: {}", this.sourcehostname);
+        LOGG.debug("sourceportnumber: {}", this.sourceportnumber);
+        LOGG.info("Source database: {}", this.sourcedatabase);
+        LOGG.debug("sourceusername: {}", this.sourceusername);
+        LOGG.debug("sourceuserpassword: {}", this.sourceuserpassword);
 
         ///--- NodeList for compareddatabase
-        sourcedbNL = docxml.getElementsByTagName("compareddatabase");
-        if (sourcedbNL != null && sourcedbNL.getLength() > 0) {
-            for (int ii = 0; ii < sourcedbNL.getLength(); ii++) {
-
-                Node node = sourcedbNL.item(ii);
-
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element elm = (Element) node;
-                    NodeList nodeList = elm.getElementsByTagName("host");
-                    this.comphostname = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("comphostname: " + this.comphostname);
-                    }
-                    nodeList = elm.getElementsByTagName("port");
-                    this.compportnumber = Integer.parseInt(nodeList.item(0).getChildNodes().item(0).getNodeValue());
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("compportnumber: " + this.compportnumber);
-                    }
-                    nodeList = elm.getElementsByTagName("name");
-                    this.compdatabase = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    LOGG.info("Compared database: " + this.compdatabase);
-
-                    nodeList = elm.getElementsByTagName("username");
-                    this.compusername = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("compusername: " + this.compusername);
-                    }
-                    nodeList = elm.getElementsByTagName("userpassword");
-                    this.compuserpassword = nodeList.item(0).getChildNodes().item(0).getNodeValue();
-                    if (LOGG.isDebugEnabled()) {
-                    	LOGG.debug("compuserpassword: " + this.compuserpassword);
-                    }
-                }
-            }
-        }
+        fileNodeList = docxml.getElementsByTagName("compareddatabase");
+        rozszyjDaneBazy(fileNodeList, false);
+        
+        LOGG.debug("comphostname: {}", this.comphostname);
+        LOGG.debug("compportnumber: {}", this.compportnumber);
+        LOGG.info("Compared database: {}", this.compdatabase);
+        LOGG.debug("compusername: {}", this.compusername);
+        LOGG.debug("compuserpassword: {}", this.compuserpassword);
 
         ///--- tables
         String tableName;
 
         LOGG.debug("Tables:");
-        sourcedbNL = docxml.getElementsByTagName("table");
-        if (LOGG.isDebugEnabled()) {
-            LOGG.debug("NodeList length: " + sourcedbNL.getLength());
-        }
-        if (sourcedbNL != null && sourcedbNL.getLength() > 0) {
-            for (int ii = 0; ii < sourcedbNL.getLength(); ii++) {
-                Node node = sourcedbNL.item(ii);
+        fileNodeList = docxml.getElementsByTagName("table");
+        LOGG.debug("NodeList length: {}", fileNodeList.getLength());
+
+        if (fileNodeList != null && fileNodeList.getLength() > 0) {
+            for (int ii = 0; ii < fileNodeList.getLength(); ii++) {
+                Node node = fileNodeList.item(ii);
                 if (LOGG.isDebugEnabled()) {
                     LOGG.debug("node: " + node.getNodeName() + " type: " + node.getNodeType());
                 }
@@ -210,10 +149,60 @@ public class ObsluzPliki {
                 }
             }
         }
-        
+
         LOGG.debug("The end of obsluga");
     }  // end of obsluga
 
+    //-------------------------------------------------------------------------------------------------
+
+    private void rozszyjDaneBazy(NodeList fileNodeList, boolean zrodlowa) {
+    	String hostname = null;
+    	int portnumber = 100000;
+    	String database = null;
+    	String username = null;
+    	String password = null;
+
+    	if (fileNodeList != null && fileNodeList.getLength() > 0) {
+            for (int ii = 0; ii < fileNodeList.getLength(); ii++) {
+
+                Node node = fileNodeList.item(ii);
+
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element elm = (Element) node;
+                    NodeList nodeList = elm.getElementsByTagName("host");
+                    hostname = nodeList.item(0).getChildNodes().item(0).getNodeValue();
+
+                    nodeList = elm.getElementsByTagName("port");
+                    portnumber = Integer.parseInt(nodeList.item(0).getChildNodes().item(0).getNodeValue());
+	                
+                    nodeList = elm.getElementsByTagName("name");
+                    database = nodeList.item(0).getChildNodes().item(0).getNodeValue();
+
+                    nodeList = elm.getElementsByTagName("username");
+                    username = nodeList.item(0).getChildNodes().item(0).getNodeValue();
+
+                    nodeList = elm.getElementsByTagName("userpassword");
+                    password = nodeList.item(0).getChildNodes().item(0).getNodeValue();
+                }
+            }
+        }
+
+    	if (zrodlowa) {
+			this.sourcehostname = hostname;
+			this.sourceportnumber = portnumber;
+			this.sourcedatabase = database;
+			this.sourceusername = username;
+			this.sourceuserpassword = password;
+    	} else {
+    		this.comphostname = hostname;
+			this.compportnumber = portnumber;
+			this.compdatabase = database;
+			this.compusername = username;
+			this.compuserpassword = password;
+    	}
+    }
+
+    //-------------------------------------------------------------------------------------------------
 
     /**
      * @return the sourcedatabase
