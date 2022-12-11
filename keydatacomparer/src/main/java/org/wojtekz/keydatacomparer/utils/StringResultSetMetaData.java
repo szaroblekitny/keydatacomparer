@@ -86,10 +86,7 @@ public class StringResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public String getColumnName(int column) throws SQLException {
-		if (column >= 1 && column <= ileKolumn) {
-			return naglowki[column];
-		}
-		throw new SQLException("Wrong column number");
+		return getColumnLabel(column);
 	}
 
 	@Override
